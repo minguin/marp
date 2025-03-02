@@ -14,6 +14,9 @@ style: |
     background: #ffffffdd;
     z-index: 1000;
   }
+  ul, ol {
+    font-size: 24px;
+  }
   /* テーブルの文字サイズを小さくする */
   table {
     font-size: 0.45em;
