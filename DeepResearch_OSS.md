@@ -19,7 +19,7 @@ style: |
   }
   /* テーブルの文字サイズを小さくする */
   table {
-    font-size: 0.45em;
+    font-size: 0.44em;
   }
   /* スライド本文の上部余白（タイトル分） */
   section div {
@@ -27,7 +27,7 @@ style: |
   }
 ---
 
-# OSS DeepResearch 比較
+# OSS DeepResearch 比較(by OpenAI DeepResearch)
 |OSS|Star数|LLM利用方法|Web検索機構|技術スタック・コード構造|社内データ統合の拡張性・改修ポイント|
 |---|---|---|---|---|---|
 |[**HuggingFaceSmolAgents<br>(OpenDeepResearch)**](https://github.com/huggingface/smolagents/tree/main/examples/open_deep_research)|13.2k(smolagentsの1example)|デフォルトはOpenAI o1を利用。<mark>CodeAgent方式でLLMがPythonコードでツール呼出しを生成し計算効率と精度向上</mark>|<mark>SerpAPI</mark>を利用してGoogle検索を実行。HTMLをMarkdownに変換してLLMへ供給|HuggingFaceの<mark>smolagentsフレームワーク上</mark>で構築。<mark>検索・スクレイピング処理は主に`text_web_browser.py`で実装。</mark>プラグイン型ツール設計でツール追加が容易|新規ツールクラス(`internal_search`)を追加し内部資料のベクトル検索を実装。エージェント初期化時にツールリストへ登録するだけでWeb検索とハイブリッド運用が可能|

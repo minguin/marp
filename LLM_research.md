@@ -24,7 +24,7 @@ style: |
   }
 ---
 
-# モデル比較一覧
+# モデル比較一覧(by OpenAI DeepResearch)
 |**モデル名**|**概要・発表日**|**技術的特徴**|**価格**|**用途**|**参考文献**|
 |---|---|---|---|---|---|
 |**GPT‑4.5**|<mark>2025年2月27日発表。</mark>GPT‑4改良版。知識量と対話品質が向上。|大規模事前学習、マルチモーダル対応（画像解析含む）。|<mark>Input: \$75/M<br>Output: \$150/M</mark>|創造的文章生成、長文要約、大量資料の解析。|[公式発表](https://openai.com/ja-JP/index/introducing-gpt-4-5/)<br>[参考記事](https://forbesjapan.com/articles/detail/77464)|
