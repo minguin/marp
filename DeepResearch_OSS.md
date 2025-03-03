@@ -28,12 +28,12 @@ style: |
 ---
 
 # OSS DeepResearch 比較
-|OSS|LLM利用方法|Web検索機構|技術スタック・コード構造|社内データ統合の拡張性・改修ポイント|
-|---|---|---|---|---|
-|**HuggingFaceSmolAgents<br>(OpenDeepResearch)**|デフォルトはOpenAI o1を利用。<mark>CodeAgent方式でLLMがPythonコードでツール呼出しを生成し計算効率と精度向上</mark>|<mark>SerpAPI</mark>を利用してGoogle検索を実行。HTMLをMarkdownに変換してLLMへ供給|HuggingFaceの<mark>smolagentsフレームワーク上</mark>で構築。<mark>検索・スクレイピング処理は主に`text_web_browser.py`で実装。</mark>プラグイン型ツール設計でツール追加が容易|新規ツールクラス(`internal_search`)を追加し内部資料のベクトル検索を実装。エージェント初期化時にツールリストへ登録するだけでWeb検索とハイブリッド運用が可能|
-|**JinaAINode‑DeepResearch**|デフォルトはGemini2.0(Flash)を利用。環境変数でOpenAI等に切替可能|<mark>JinaReaderサービスを利用してBrave/DuckDuckGo等から検索結果取得。</mark>API呼出しでスクレイピングと要約を一体実現|Node.js/TypeScriptで実装。非同期処理(Promise/async-await)を用いたシンプルなループ(Question→Search→Read→Reason)構造。検索関連はAPIコールに依存|検索ステップに内部向けAPI(Pinecone等のJSSDK利用)を追記しWeb検索結果とマージ可能。検索処理部分の関数改修で内部データを加えたハイブリッド運用が実現|
-|**dzhng/deep‑research**|デフォルトはOpenAI o3-miniを利用|<mark>FirecrawlAPIを利用しSERP検索とページスクレイピングを一括実施。</mark>取得結果はMarkdown化されLLMへ供給|Node.js/TypeScriptで約500行のシンプル実装。ユーザ入力に基づくループ(breadth/depth)で検索クエリ生成と並列実行(Promise.all)を採用。中心はFirecrawlAPI呼出し|Firecrawl検索呼出し部分をラップし内部資料のベクトル検索結果をマージ。シンプルなコード構造のため、最小限の変更でWeb検索結果に内部情報を付加可能|
-|**LangChainOpenDeepResearch**|<mark>PlannerとWriterの2段階構成。</mark>デフォルトはPlannerでOpenAI(o3-mini)、WriterでAnthropic(Claude3.5)を利用。環境変数/設定ファイルで柔軟に変更可能|<mark>TavilyAPI(またはPerplexityAPI)を用いたリアルタイムWeb検索。</mark>検索結果はLangChainのDocumentオブジェクトとして取得しLLMへ使用|Python＋LangChainフレームワーク上で構築。各コンポーネント(Planner,Searcher,Writer)が明確に分離。チェーン/エージェント仕組みを活用しプロンプトテンプレートやツールとしての検索機能を実装|<mark>LangChainのDocumentLoaderやVectorStore(Chroma/FAISS/Pinecone等)を利用したRetrieverを容易に追加可能。カスタムRetrieverでTavily検索結果と内部ベクトル検索結果を統合し、設定変更/少量のコード修正で内部データ統合が実現可能</mark>|
+|OSS|Star数|LLM利用方法|Web検索機構|技術スタック・コード構造|社内データ統合の拡張性・改修ポイント|
+|---|---|---|---|---|---|
+|[**HuggingFaceSmolAgents<br>(OpenDeepResearch)**](https://github.com/huggingface/smolagents/tree/main/examples/open_deep_research)|13.2k(smolagentsの1example)|デフォルトはOpenAI o1を利用。<mark>CodeAgent方式でLLMがPythonコードでツール呼出しを生成し計算効率と精度向上</mark>|<mark>SerpAPI</mark>を利用してGoogle検索を実行。HTMLをMarkdownに変換してLLMへ供給|HuggingFaceの<mark>smolagentsフレームワーク上</mark>で構築。<mark>検索・スクレイピング処理は主に`text_web_browser.py`で実装。</mark>プラグイン型ツール設計でツール追加が容易|新規ツールクラス(`internal_search`)を追加し内部資料のベクトル検索を実装。エージェント初期化時にツールリストへ登録するだけでWeb検索とハイブリッド運用が可能|
+|[**JinaAINode‑DeepResearch**](https://github.com/jina-ai/node-DeepResearch)|3k|デフォルトはGemini2.0(Flash)を利用。環境変数でOpenAI等に切替可能|<mark>JinaReaderサービスを利用してBrave/DuckDuckGo等から検索結果取得。</mark>API呼出しでスクレイピングと要約を一体実現|Node.js/TypeScriptで実装。非同期処理(Promise/async-await)を用いたシンプルなループ(Question→Search→Read→Reason)構造。検索関連はAPIコールに依存|検索ステップに内部向けAPI(Pinecone等のJSSDK利用)を追記しWeb検索結果とマージ可能。検索処理部分の関数改修で内部データを加えたハイブリッド運用が実現|
+|[**dzhng/deep‑research**](https://github.com/dzhng/deep-research)|13.6k|デフォルトはOpenAI o3-miniを利用|<mark>FirecrawlAPIを利用しSERP検索とページスクレイピングを一括実施。</mark>取得結果はMarkdown化されLLMへ供給|Node.js/TypeScriptで約500行のシンプル実装。ユーザ入力に基づくループ(breadth/depth)で検索クエリ生成と並列実行(Promise.all)を採用。中心はFirecrawlAPI呼出し|Firecrawl検索呼出し部分をラップし内部資料のベクトル検索結果をマージ。シンプルなコード構造のため、最小限の変更でWeb検索結果に内部情報を付加可能|
+|[**LangChainOpenDeepResearch**](https://github.com/langchain-ai/open_deep_research)|1.9k(Ollama:2.6k)|<mark>PlannerとWriterの2段階構成。</mark>デフォルトはPlannerでOpenAI(o3-mini)、WriterでAnthropic(Claude3.5)を利用。環境変数/設定ファイルで柔軟に変更可能|<mark>TavilyAPI(またはPerplexityAPI)を用いたリアルタイムWeb検索。</mark>検索結果はLangChainのDocumentオブジェクトとして取得しLLMへ使用|Python＋LangChainフレームワーク上で構築。各コンポーネント(Planner,Searcher,Writer)が明確に分離。チェーン/エージェント仕組みを活用しプロンプトテンプレートやツールとしての検索機能を実装|<mark>LangChainのDocumentLoaderやVectorStore(Chroma/FAISS/Pinecone等)を利用したRetrieverを容易に追加可能。カスタムRetrieverでTavily検索結果と内部ベクトル検索結果を統合し、設定変更/少量のコード修正で内部データ統合が実現可能</mark>|
 ---
 
 # Hugging Face SmolAgents  
