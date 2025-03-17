@@ -39,6 +39,15 @@ style: |
 
 ---
 
+# [Manus](https://manus.im/?index=1)
+- 3タスク実行可。実行して24時間で枠が回復するイメージ
+- 挙動はBrowser-use（Docker?E2B?）、Claude MCP、を使ってのリサーチやコード生成・実行
+1. DeepResearchについてはOpenAI DeepResearchの方が精度高いようにも感じたが、X等では別れている印象。
+[2025年生成AI最新情報と技術論文調査例](https://manus.im/share/nX9nm075vcEDq3DQ5CZXxB?replay=1)
+2. コード生成・実行周りは、後述の通りClaude3.5ベースだからか、本家Claude3.7で叩く方が良い感じに出てくる印象が個人的にあった。
+[コード生成・実行系（ダッシュボード作成）](https://manus.im/share/2jdF1DGBUw0EM2T2MGTuzf?replay=1)
+
+---
 # Manusの公式デモ①
 
 ## 顧客開拓リスト作成
@@ -80,11 +89,9 @@ style: |
 ## 主要モデルと構成
 
 [共同創設者Yichao 'Peak' Jiによる情報](https://x.com/peakji/status/1898997311646437487)：
-
-- **基盤モデル**: Claude 3.5/3.7 Sonnetと様々なQwen微調整モデルを使用
-- **初期開発時**: Claude 3.5 Sonnet v1（長文CoT/推論トークンなし）を使用
+- **初期開発時**: Claude 3.5 Sonnet v1（長文CoT/推論トークンなし）と様々なQwen微調整モデルを使用
   - 機能を補うため多数の補助モデルが必要だった
-  - Manus構想時にはまだClaude 3.5まで
+  - Manus構想時にはまだClaude 3.5までだったから
 - **現在**: Claude 3.7が有望視され、内部テスト中
 
 ---
