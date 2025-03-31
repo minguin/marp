@@ -1,0 +1,1561 @@
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>各種リスクファクターの分析とモデリング手法</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: #f5f5f5;
+      color: #333;
+      line-height: 1.6;
+      padding: 16px;
+      font-size: 14px;
+    }
+    
+    h1 {
+      font-size: 24px;
+      color: #1a365d;
+      margin-bottom: 16px;
+      text-align: center;
+    }
+    
+    h2 {
+      font-size: 20px;
+      color: #1a365d;
+      margin-top: 24px;
+      margin-bottom: 12px;
+      border-left: 5px solid #1a365d;
+      padding-left: 8px;
+    }
+    
+    h3 {
+      font-size: 18px;
+      color: #1a365d;
+      margin-top: 16px;
+      margin-bottom: 8px;
+    }
+    
+    .section {
+      background-color: white;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 24px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    .summary {
+      font-weight: bold;
+      font-size: 16px;
+      margin-bottom: 16px;
+      padding: 8px;
+      background-color: #f0f4f8;
+      border-radius: 4px;
+    }
+    
+    .key-text {
+      font-size: 20px;
+      font-weight: bold;
+      display: inline-block;
+      margin: 4px 0;
+    }
+    
+    .highlight {
+      background: linear-gradient(transparent 70%, #ffcc66 70%);
+      font-weight: bold;
+    }
+    
+    .underline {
+      border-bottom: 2px solid #1a365d;
+      padding-bottom: 2px;
+      font-weight: bold;
+    }
+    
+    ul, ol {
+      padding-left: 20px;
+      margin: 8px 0;
+    }
+    
+    li {
+      margin-bottom: 8px;
+    }
+    
+    hr {
+      border: 0;
+      height: 1px;
+      background-color: #ddd;
+      margin: 24px 0;
+    }
+    
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 16px 0;
+    }
+    
+    th, td {
+      padding: 8px;
+      border: 1px solid #ddd;
+      text-align: left;
+    }
+    
+    th {
+      background-color: #1a365d;
+      color: white;
+    }
+    
+    tr:nth-child(even) {
+      background-color: #f2f2f2;
+    }
+    
+    .qa-container {
+      margin: 16px 0;
+    }
+    
+    .qa-item {
+      margin-bottom: 8px;
+    }
+    
+    .qa-question {
+      cursor: pointer;
+      font-weight: bold;
+      color: #1a365d;
+      padding: 8px;
+      background-color: #f0f4f8;
+      border-radius: 4px;
+      position: relative;
+    }
+    
+    .qa-question::after {
+      content: "▼";
+      position: absolute;
+      right: 8px;
+      transition: transform 0.3s;
+    }
+    
+    .qa-answer {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease-out;
+      background-color: #fafafa;
+      border-radius: 0 0 4px 4px;
+      padding: 0 8px;
+    }
+    
+    .qa-toggle {
+      display: none;
+    }
+    
+    .qa-toggle:checked + .qa-question::after {
+      transform: rotate(180deg);
+    }
+    
+    .qa-toggle:checked + .qa-question + .qa-answer {
+      max-height: 500px;
+      padding: 8px;
+    }
+    
+    footer {
+      font-size: 12px;
+      color: #666;
+      margin-top: 24px;
+      text-align: center;
+    }
+    
+    .toc {
+      background-color: white;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 24px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    .toc-title {
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 12px;
+      color: #1a365d;
+    }
+    
+    .toc-list {
+      list-style-type: none;
+      padding-left: 0;
+    }
+    
+    .toc-list li {
+      margin-bottom: 10px;
+    }
+    
+    .toc-list a {
+      text-decoration: none;
+      color: #1a365d;
+      padding: 4px 0;
+      display: block;
+    }
+    
+    .toc-list a:hover {
+      text-decoration: underline;
+    }
+    
+    .back-to-toc {
+      display: inline-block;
+      margin-top: 16px;
+      font-size: 12px;
+      color: #1a365d;
+      text-decoration: none;
+      padding: 4px 8px;
+      background-color: #f0f4f8;
+      border-radius: 4px;
+    }
+    
+    .back-to-toc:hover {
+      background-color: #dbe4f0;
+    }
+  </style>
+</head>
+<body>
+  <h1>各種リスクファクターの分析とモデリング手法</h1>
+  
+  <div class="toc" id="toc">
+    <div class="toc-title">目次</div>
+    <ul class="toc-list">
+      <li><a href="#intro">はじめに</a></li>
+      <li><a href="#foreign-exchange">為替リスク</a></li>
+      <li><a href="#interest-rate">金利リスク</a></li>
+      <li><a href="#commodity">コモディティリスク</a></li>
+      <li><a href="#shipping">船舶リスク</a></li>
+      <li><a href="#real-estate">不動産リスク</a></li>
+      <li><a href="#electricity">電力価格リスク</a></li>
+      <li><a href="#credit">信用リスク</a></li>
+      <li><a href="#equity">株価変動リスク</a></li>
+      <li><a href="#var-calculation">VaRの計算方法詳説</a></li>
+      <li><a href="#rate-models">金利モデル詳説</a></li>
+      <li><a href="#jump-models">ジャンプ拡散型・マルコフモデル</a></li>
+      <li><a href="#garch-models">GARCHモデル詳説</a></li>
+      <li><a href="#merton-models">Mertonモデル詳説</a></li>
+      <li><a href="#terms">主要用語・事実の整理</a></li>
+      <li><a href="#summary">まとめ</a></li>
+    </ul>
+  </div>
+  
+  <div class="section" id="intro">
+    <div class="summary">
+      企業や投資ポートフォリオが直面する代表的なリスク要因について、<span class="highlight">エクスポージャーの抽出・可視化手法</span>、<span class="highlight">数理統計・金融工学でのモデリング手法</span>（伝統的手法に加えAI・機械学習・LLMの活用事例）、<span class="highlight">最終的なリスク指標の算出方法</span>、<span class="highlight">ビジネスへの活用</span>（リスクヘッジ、最適戦略策定、投資判断、投資適格等級の維持）について整理しています。
+    </div>
+    
+    <p>以下では、為替、金利、コモディティ、船舶、不動産、電力価格、信用、株価変動の各リスクについて、それぞれ上記観点で解説します。</p>
+    
+    <a href="#toc" class="back-to-toc">▲ 目次に戻る</a>
+  </div>
+  
+  <div class="section" id="foreign-exchange">
+    <h2>為替リスク（Foreign Exchange Risk）</h2>
+    
+    <div class="summary">
+      為替リスクとは、為替レートの変動が企業の収支や資産価値に影響を与えるリスクです。取引・換算・経済の3種類のエクスポージャーがあり、通貨マップで可視化し、統計的手法やAIでモデル化、VaRなどの指標で定量化します。
+    </div>
+    
+    <h3>エクスポージャーの抽出・可視化手法</h3>
+    <p>為替リスクに対するエクスポージャー（曝露額）とは、為替レートの変動により企業のキャッシュフローや評価額がどれだけ影響を受けるかを表します。企業が直面する為替エクスポージャーには主に次の3種類があります：</p>
+    <ul>
+      <li><span class="underline">取引（トランザクション）エクスポージャー</span>：外貨建ての取引（輸出入代金や外貨建て借入など）から生じるリスク</li>
+      <li><span class="underline">換算（トランスレーション）エクスポージャー</span>：海外子会社の財務諸表を本社通貨に換算する際の為替変動リスク</li>
+      <li><span class="underline">経済（オペレーション）エクスポージャー</span>：為替変動が将来の競争力や事業価値に及ぼす長期的なリスク</li>
+    </ul>
+    
+    <p>これらを把握するために、財務データから<span class="key-text">通貨別の収入・費用・資産・負債</span>を洗い出します。実務では、各事業部門の外貨建てキャッシュフローを網羅した「<span class="key-text">通貨マップ（Currency Map）</span>」を作成し、ビジネス全体の真の為替曝露を可視化する手法が有効です。</p>
+    
+    <hr>
+    
+    <h3>モデリング手法（伝統的手法・AI/機械学習・LLM）</h3>
+    <p>為替リスクのモデリングには、<span class="underline">統計的手法</span>と<span class="underline">シナリオ分析</span>の両面があります。伝統的には、為替レートの変動分布を分析し<span class="key-text">ボラティリティや相関</span>を見積もることで、リスク計量モデルを構築します。例えば：</p>
+    <ul>
+      <li><span class="underline">ヒストリカルシミュレーション</span>：過去のレート変動に基づくシミュレーション</li>
+      <li><span class="underline">モンテカルロ・シミュレーション</span>：正規分布等を仮定した確率的シミュレーション</li>
+      <li><span class="underline">GARCHモデル</span>：時系列モデルでボラティリティの変化を捉える</li>
+    </ul>
+    
+    <p>近年は<span class="key-text">AI・機械学習</span>も為替リスク管理に活用されつつあります。例えば、機械学習を用いて市場データのパターンを学習し、為替レートの変動や急変リスクを検知する試みがあります。LLM（大規模言語モデル）については、<span class="underline">リスク要因の特定や定性的情報の分析</span>に活用されます。</p>
+    
+    <hr>
+    
+    <h3>最終的なリスク指標の算出方法</h3>
+    <p>為替リスクを統合的に示す指標として代表的なのが<span class="key-text">Value at Risk（VaR：価値危険額）</span>です。VaRは「一定の信頼水準で、一定保有期間に被る可能性のある最大損失額」を示す統計指標で、リスク量を一つの数値で表します。</p>
+    
+    <p>他にも<span class="underline">現実的なリスク指標</span>として、以下のようなものがあります：</p>
+    <ul>
+      <li><span class="underline">為替感応度分析</span>：主要通貨が1単位変動した場合の損益影響額</li>
+      <li><span class="underline">ストレステスト結果</span>：過去の急激な為替変動を再現した場合の損失見積もり</li>
+      <li><span class="underline">Cash-Flow-at-Risk（CFaR）</span>：一定信頼水準で予測されるキャッシュフローの悪化額</li>
+    </ul>
+    
+    <hr>
+    
+    <h3>ビジネスへの活用（リスクヘッジ・戦略・投資判断）</h3>
+    <p>為替リスク管理の目的は、<span class="key-text">予測不能な為替変動による業績ブレ（損失）を抑え、企業価値の安定性を保つこと</span>です。具体的な活用例を以下に挙げます：</p>
+    <ul>
+      <li><span class="underline">ヘッジ戦略の策定</span>：為替フォワード、スワップ、オプションによる固定レート化</li>
+      <li><span class="underline">リスク許容度に応じた最適戦略</span>：許容範囲内になるようヘッジ比率を調整</li>
+      <li><span class="underline">投資判断への反映</span>：為替シナリオを織り込んだNPV計算</li>
+      <li><span class="underline">業績安定化による信用力維持</span>：キャッシュフローや利益の安定性確保</li>
+    </ul>
+    
+    <div class="qa-container">
+      <div class="qa-item">
+        <input type="checkbox" id="q1" class="qa-toggle">
+        <label for="q1" class="qa-question">Q. 中小企業が為替リスクを管理するための簡易的な方法はありますか？</label>
+        <div class="qa-answer">
+          中小企業でも以下の簡易的な方法で為替リスクを管理できます：①外貨建て売掛金・買掛金の残高を常に把握する ②取引金額が大きい場合は為替予約を活用する ③円建て取引を取引先と交渉する ④売りと買いの通貨をなるべく一致させる（ナチュラルヘッジ）。リソースが限られる場合でも、エクスポージャーを把握しておくことが最低限必要です。
+        </div>
+      </div>
+      
+      <div class="qa-item">
+        <input type="checkbox" id="q2" class="qa-toggle">
+        <label for="q2" class="qa-question">Q. 為替変動が将来予測できない中、どのようにヘッジ比率を決めるべきですか？</label>
+        <div class="qa-answer">
+          完全に予測することは難しいため、リスク許容度に応じたヘッジ方針を決めることが重要です。例えば、確定した取引（受注済み）は70-80%ヘッジし、見込み取引は30-50%にとどめるといった段階的アプローチが有効です。また、ヘッジ手段も先物だけでなく、オプションを併用して上振れの余地を残す方法もあります。経営陣が合意した為替変動の許容範囲（例：年間利益への影響を5%以内に抑える）を基準にヘッジ比率を決定することがポイントです。
+        </div>
+      </div>
+    </div>
+    
+    <a href="#toc" class="back-to-toc">▲ 目次に戻る</a>
+  </div>
+
+  <div class="section" id="interest-rate">
+    <h2>金利リスク（Interest Rate Risk）</h2>
+    
+    <div class="summary">
+      金利リスクとは、市場金利の変動によって資産価値や利息収支が変動するリスクです。金利感応度ギャップやデュレーション分析で可視化し、金利の期間構造モデルで分析、デュレーションやNIIアットリスクなどの指標で定量化します。
+    </div>
+    
+    <h3>エクスポージャーの抽出・可視化手法</h3>
+    <p>金利リスクとは、<span class="key-text">市場金利の変動によって資産価値や利息収支が変動するリスク</span>です。特に銀行や保険など金融機関では資産・負債の金利感応度ミスマッチから大きなリスクが生じます。エクスポージャー抽出の第一歩は、<span class="underline">金利感応度ギャップ（金利ギャップ）分析</span>です。</p>
+    
+    <p>さらに洗練された手法として、各資産・負債の<span class="key-text">デュレーション（期間感応度）</span>を用いる<span class="underline">デュレーション・ギャップ分析</span>があります。デュレーションは金利が小幅変動した際の資産価値の感応度で、資産平均デュレーションと負債平均デュレーションの差をデュレーションギャップといいます。</p>
+    
+    <p>可視化には、<span class="underline">期限別残高グラフ</span>（ギャップを視覚化）、<span class="underline">デュレーションヒートマップ</span>などが用いられます。</p>
+    
+    <hr>
+    
+    <h3>モデリング手法（伝統的手法・AI/機械学習・LLM）</h3>
+    <p>金利リスクのモデリングでは、<span class="underline">金利変動シナリオの生成</span>と<span class="underline">ポートフォリオ価値・収益への影響計測</span>が中心となります。伝統的には<span class="key-text">金利の期間構造モデル</span>が使われてきました：</p>
+    <ul>
+      <li><span class="underline">Vasicekモデル</span>や<span class="underline">CIRモデル</span>：金利の確率過程を表現</li>
+      <li><span class="underline">主要因分析（PCA）</span>：金利カーブ変動を「平行シフト」「傾き」「曲率」の因子で説明</li>
+      <li><span class="underline">モンテカルロ法</span>：数千の金利パスを生成してポートフォリオの損益分布を算出</li>
+    </ul>
+    
+    <p><span class="key-text">機械学習の活用</span>も金利分野で進みつつあります：</p>
+    <ul>
+      <li><span class="underline">自己組織化マップ（SOM）</span>や<span class="underline">ガウス混合モデル</span>による金利カーブのパターン分類</li>
+      <li><span class="underline">深層学習</span>による複雑な金利の動的パターン予測</li>
+    </ul>
+    
+    <p>LLMの活用は、<span class="underline">FOMC議事要旨や中央銀行総裁発言の分析</span>などテキスト処理で役立つ可能性があります。</p>
+    
+    <hr>
+    
+    <h3>最終的なリスク指標の算出方法</h3>
+    <p>金利リスク管理で用いられる指標には以下のようなものがあります：</p>
+    <ul>
+      <li><span class="underline">デュレーション/DV01</span>：金利が1ベーシスポイント動いたときの損益変動額</li>
+      <li><span class="underline">ギャップ比率</span>：各期間の資産負債ギャップ額を自己資本や総資産で割った指標</li>
+      <li><span class="underline">NIIアットリスク（NII@Risk）</span>：今後一定期間の純金利収支の変動リスク</li>
+      <li><span class="underline">Value at Risk (VaR)</span>：一定期間内の信頼区間付き最大損失額</li>
+      <li><span class="underline">経済価値損失額（EVE変動）</span>：金利が即時平行シフトした場合の経済価値純減少額</li>
+    </ul>
+    
+    <hr>
+    
+    <h3>ビジネスへの活用（リスクヘッジ・戦略・投資判断）</h3>
+    <p>金利リスク管理をビジネスに活かす目的は、<span class="key-text">金利変動による支払い利息の増加や資産価値の目減りを抑え、財務の安定性を確保すること</span>です。以下、具体例です：</p>
+    <ul>
+      <li><span class="underline">ヘッジ手段の活用</span>：金利スワップ、キャップ、フロアなどで金利リスクをヘッジ</li>
+      <li><span class="underline">ポートフォリオの最適化</span>：長期資産に対して長期負債を調達するなどマッチング</li>
+      <li><span class="underline">投資・プロジェクト評価</span>：金利リスクがプロジェクト収支に与える影響を評価</li>
+      <li><span class="underline">収益管理と価格戦略</span>：将来の金利変動を見越した金利設定戦略</li>
+    </ul>
+    
+    <div class="qa-container">
+      <div class="qa-item">
+        <input type="checkbox" id="q3" class="qa-toggle">
+        <label for="q3" class="qa-question">Q. 低金利環境と高金利環境でリスク管理の方針はどう変えるべきですか？</label>
+        <div class="qa-answer">
+          低金利環境では、将来の金利上昇リスクに備えて、固定金利比率を高めることが一般的です。特に長期資金調達のタイミングでは固定化を検討します。一方、高金利環境では、将来の金利低下の恩恵を受けられるよう変動金利の比率を高める傾向があります。ただし企業の財務体質によって戦略は異なり、レバレッジが高い企業は金利上昇に対して脆弱なため、高金利環境でも一定比率は固定化するべきです。いずれの環境でも、極端な偏りを避け、リスク許容度に応じたバランスが重要です。
+        </div>
+      </div>
+      
+      <div class="qa-item">
+        <input type="checkbox" id="q4" class="qa-toggle">
+        <label for="q4" class="qa-question">Q. デュレーションとは具体的に何を表す指標ですか？</label>
+        <div class="qa-answer">
+          デュレーションは、金利変動に対する債券などの価格感応度を表す指標です。具体的には、金利が1%（100ベーシスポイント）変化したときに債券価格が何%変化するかを近似的に示します。例えば、デュレーション5の債券は、金利が1%上昇すると価格が約5%下落します。数学的には、将来キャッシュフローの現在価値加重平均満期と定義され、より長期の債券ほどデュレーションは大きくなり、金利変動の影響を受けやすくなります。企業が保有する資産と負債のデュレーションギャップ（差）が大きいほど、金利変動による経済価値変動リスクが高まるため、このギャップを小さくする管理が重要です。
+        </div>
+      </div>
+    </div>
+    
+    <a href="#toc" class="back-to-toc">▲ 目次に戻る</a>
+  </div>
+
+  <div class="section" id="commodity">
+    <h2>コモディティリスク（Commodity Price Risk）</h2>
+    
+    <div class="summary">
+      コモディティリスクとは、石油・金属・農産物など商品市況価格の変動によって企業収支が影響を受けるリスクです。商品別の消費量・在庫量を基にエクスポージャーを把握し、統計モデルやAIでパターンを分析、CFaRなどの指標で管理します。
+    </div>
+    
+    <h3>エクスポージャーの抽出・可視化手法</h3>
+    <p>コモディティリスクとは、<span class="key-text">石油・金属・農産物など商品市況価格の変動</span>によって企業収支が影響を受けるリスクです。製造業や運輸業など、原材料や燃料として商品を扱う企業では特に重要です。</p>
+    
+    <p>エクスポージャー抽出の基本は、自社の<span class="key-text">コモディティ使用量</span>および<span class="key-text">価格連動の契約</span>を洗い出し、「価格がX%動くとコスト/収益がどれだけ変動するか」を定量化することです。まず、対象となる商品ごとに<span class="underline">年間消費量</span>や<span class="underline">在庫量</span>を把握します。</p>
+    
+    <p>また<span class="underline">ネットエクスポージャー</span>の概念も重要です。自社があるコモディティを<span class="key-text">売る立場でもあり買う立場でもある</span>場合、それぞれ相殺できます。</p>
+    
+    <p>可視化手法としては、<span class="underline">スライシングダイス</span>による分析が有用です。商品種別×事業部門のマトリクスで曝露量を整理したり、価格変動シナリオ別のEBITDA影響を棒グラフ化します。</p>
+    
+    <hr>
+    
+    <h3>モデリング手法（伝統的手法・AI/機械学習・LLM）</h3>
+    <p>コモディティリスクのモデリングでは、市場価格の不確実性をどうモデル化するかがポイントです。伝統的には、<span class="underline">ヒストリカルなボラティリティと相関</span>に基づくモデルが使われます：</p>
+    <ul>
+      <li><span class="underline">平均回帰型モデル</span>：エネルギー価格の平均回帰性を考慮</li>
+      <li><span class="underline">ジャンプ拡張型モデル</span>：突発的な価格変動を組み込み</li>
+      <li><span class="underline">VaR（Value at Risk）</span>：コモディティポートフォリオのリスク量測定</li>
+    </ul>
+    
+    <p>企業の事業計画上は、<span class="underline">キャッシュフロー予測モデル</span>に価格シナリオを載せて<span class="key-text">Cash-Flow-at-Risk（CFaR）</span>を計算することが多いです。</p>
+    
+    <p><span class="key-text">機械学習・AI</span>の活用例も増えてきました。コモディティ価格は多種多様な要因に左右されるため、ビッグデータからパターンを学習するAIは有用です：</p>
+    <ul>
+      <li>需要予測にAIを使ってより正確な見通しを立てる</li>
+      <li><span class="underline">異常検知</span>によって平時と異なるボラティリティ局面を素早く察知</li>
+    </ul>
+    
+    <p>LLMの分野では、関連ニュースやレポートの解析で有用でしょう。例えばOPECの声明文や天候予報記事をLLMに要約させ、価格への方向性を判断する補助とします。</p>
+    
+    <hr>
+    
+    <h3>最終的なリスク指標の算出方法</h3>
+    <p>コモディティリスクの最終指標も、<span class="key-text">VaR</span>や<span class="key-text">CFaR</span>が中心です。企業財務の視点では<span class="underline">CFaR</span>が有用で、「来期1年間、95%の確率でコモディティ価格要因によりキャッシュフローが○億円以上悪化しない」という指標になります。</p>
+    
+    <p>トレーディング部門の視点では<span class="underline">VaR/期待ショートフォール（ES）</span>が使われ、日次のリスク量管理やリミット設定に役立ちます。</p>
+    
+    <p>また<span class="underline">感応度指標</span>として、商品価格変動が財務指標に与える影響をまとめることも多いです。例えば「原油価格1バレルあたり1ドル変動で年間営業利益が○億増減」といった感応度は、投資家向け開示でもよく使われます。</p>
+    
+    <hr>
+    
+    <h3>ビジネスへの活用（リスクヘッジ・戦略・投資判断）</h3>
+    <p>コモディティリスク管理のゴールは、<span class="key-text">商品価格の急変による業績ブレを滑らかにし、事業の安定性と競争力を確保すること</span>です。以下、具体的な活用例です：</p>
+    <ul>
+      <li><span class="underline">ヘッジ戦略の導入</span>：商品先物市場やOTCデリバティブを使った価格変動ヘッジ</li>
+      <li><span class="underline">調達・販売戦略への組込</span>：原材料費連動の価格転嫁契約、長期固定価格契約など</li>
+      <li><span class="underline">投資判断とプロジェクト評価</span>：対象商品の将来価格レンジを想定したNPV感応度分析</li>
+      <li><span class="underline">信用力維持</span>：ヘッジにより一定以上の損失が出ないようにし格下げリスクを回避</li>
+    </ul>
+    
+    <div class="qa-container">
+      <div class="qa-item">
+        <input type="checkbox" id="q5" class="qa-toggle">
+        <label for="q5" class="qa-question">Q. 中小企業がコモディティリスクを管理する簡易的な方法はありますか？</label>
+        <div class="qa-answer">
+          中小企業でも実施可能なコモディティリスク管理方法には以下があります：①定期的に主要原材料の使用量を把握し、価格変動による影響額を試算する ②サプライヤーと長期固定価格契約を交渉する ③価格転嫁条項を顧客との契約に盛り込む ④在庫水準を価格動向に応じて調整する（価格上昇前に増量、下落前に減量）。先物市場を使うハードルが高い場合でも、まずはエクスポージャーの把握と契約条件の工夫で相当のリスク低減が可能です。また業界団体や商工会議所などを通じて価格情報を収集することも有効です。
+        </div>
+      </div>
+      
+      <div class="qa-item">
+        <input type="checkbox" id="q6" class="qa-toggle">
+        <label for="q6" class="qa-question">Q. コモディティ価格のヘッジ比率はどのように決めるべきですか？</label>
+        <div class="qa-answer">
+          ヘッジ比率は以下の要素を考慮して決定すべきです：①事業のリスク許容度（営業利益の何%までの変動なら許容できるか）②価格転嫁能力（顧客に価格上昇を転嫁できる程度）③将来の価格見通し④ヘッジコスト⑤キャッシュフロー状況。一般的には、確定注文や近い将来の必要量は高い比率（例：70-80%）でヘッジし、遠い将来の必要量は低い比率（例：30%以下）にするといった時間軸に応じた段階的アプローチが有効です。また、常に一定比率をヘッジする「定率ヘッジ」や、価格が有利なレベルになったときにヘッジする「選択的ヘッジ」など、自社の方針に合った戦略を選ぶことが重要です。
+        </div>
+      </div>
+    </div>
+    
+    <a href="#toc" class="back-to-toc">▲ 目次に戻る</a>
+  </div>
+
+  <div class="section" id="shipping">
+    <h2>船舶リスク（Shipping Risk）</h2>
+    
+    <div class="summary">
+      船舶リスクは、海上運賃の変動や船舶稼働に伴うリスクを指します。輸送量と運賃感応度を分析してエクスポージャーを把握し、運賃市況の時系列モデルで分析、Freight VaRなどの指標で定量化します。
+    </div>
+    
+    <h3>エクスポージャーの抽出・可視化手法</h3>
+    <p>「船舶リスク」はやや広い概念ですが、ここでは<span class="key-text">海上輸送（シッピング）に関するリスク</span>を指すものとします。具体的には<span class="underline">海運運賃の変動リスク</span>や<span class="underline">船舶稼働に伴うリスク</span>（運航コスト、事故など）を考えます。</p>
+    
+    <p>エクスポージャー抽出では、まず<span class="key-text">年間の輸送需要</span>を把握します。例えば「年間○トンの鉄鉱石をブラジルから日本へ輸送」「コンテナ○本分の製品を中国から欧米へ出荷」といった単位です。次に、現在の契約運賃やスポット運賃をもとに、<span class="underline">輸送コストの基準額</span>を算定します。</p>
+    
+    <p>また、企業が自社で船舶を保有または長期チャーターしている場合は、その<span class="underline">船腹量</span>（輸送能力）と<span class="underline">対応する貨物量</span>を把握し、不足分または過剰分がどれだけスポット市場に依存するかを分析します。</p>
+    
+    <p>可視化には、主要航路ごとの輸送量と運賃感応度をグラフ化する方法があります。「北米向け40ftコンテナ：+\$500/箱で年間+\$X万」など一覧にします。また<span class="key-text">地図上に航路とリスク量をマッピング</span>する手法もあります。</p>
+    
+    <hr>
+    
+    <h3>モデリング手法（伝統的手法・AI/機械学習・LLM）</h3>
+    <p>船舶リスクのモデリングは、<span class="key-text">海運市況のボラティリティ</span>をどう捉えるかが中心です。伝統的には、海運市況指数（例：BDI、VLCCタンカー運賃など）の<span class="underline">時系列モデル</span>を構築し、将来の運賃シナリオを発生させます：</p>
+    <ul>
+      <li><span class="underline">ARIMAモデル</span>や季節性を織り込んだ回帰モデル</li>
+      <li><span class="underline">マクロ経済指標や貿易量</span>との関連をモデル化</li>
+      <li><span class="underline">分布アプローチ</span>：運賃変動のヒストリカル分布からVaRを計算</li>
+    </ul>
+    
+    <p><span class="key-text">機械学習</span>は海運リスクにも活用が検討されています。例えば<span class="underline">需要予測や価格予測</span>の分野です：</p>
+    <ul>
+      <li>過去の輸送量データ、燃料価格、経済指標、天候など様々な特徴量から運賃を予測</li>
+      <li>AIが需給ひっ迫を早期に察知し、スポット運賃の急騰リスクを事前に警告</li>
+    </ul>
+    
+    <p>LLMについては、例えば海事ニュースや港湾ストライキ情報の分析に使えます。膨大なニュースから「○○港でスト発生、どれくらい運航に影響しうるか」といった判断をLLMに助けてもらうことで、人間の意思決定を補佐できます。</p>
+    
+    <hr>
+    
+    <h3>最終的なリスク指標の算出方法</h3>
+    <p>船舶リスクの定量指標としては、<span class="underline">輸送コストの変動幅</span>や<span class="underline">損失額</span>に着目します。例えば：</p>
+    <ul>
+      <li><span class="underline">Freight VaR</span>：一定期間で運賃変動によるコスト増加額のVaR</li>
+      <li><span class="underline">年間コスト増減シナリオ</span>：運賃平均が前年比+50%となった場合の影響額</li>
+      <li><span class="underline">輸送量カバー率</span>：自社保有・長期契約で確保済みの輸送能力が総需要の何％を賄うか</li>
+      <li><span class="underline">費用割合指標</span>：運賃コストが製品原価や仕入総額に占める割合</li>
+    </ul>
+    
+    <hr>
+    
+    <h3>ビジネスへの活用（リスクヘッジ・戦略・投資判断）</h3>
+    <p>船舶リスクへの対処と戦略活用の例です：</p>
+    <ul>
+      <li><span class="underline">フォワードフレイト契約（FFA）によるヘッジ</span>：将来の運賃をあらかじめ固定するデリバティブ</li>
+      <li><span class="underline">長期契約とスポットのバランス</span>：運賃市況に応じて長期契約比率を調整</li>
+      <li><span class="underline">輸送経路・調達先の分散</span>：一つの航路や地域に依存せず分散</li>
+      <li><span class="underline">価格交渉力・サーチャージ</span>：契約に運賃変動時の調整条項を盛り込む</li>
+    </ul>
+    
+    <div class="qa-container">
+      <div class="qa-item">
+        <input type="checkbox" id="q7" class="qa-toggle">
+        <label for="q7" class="qa-question">Q. FFAとは具体的にどのような取引ですか？</label>
+        <div class="qa-answer">
+          FFA（Forward Freight Agreement）は、将来の特定時点における特定航路の運賃を現時点で取り決める金融派生商品です。例えば、3か月後の中国-欧州航路のコンテナ運賃を現在の$2,000/TEUで固定する契約を結びます。3ヶ月後に実際の市場運賃が$2,500になれば、買い手は$500/TEUの利益を得られます（実際の輸送コストは$2,500支払うが、FFAで$500の利益を得るため実質$2,000）。FFAは通常、現物の輸送契約とは分離して決済され、差金決済が一般的です。主にドライバルク、タンカー、コンテナ市場で使われ、Baltic Exchange等の公表指数を参照レートとすることが多いです。
+        </div>
+      </div>
+      
+      <div class="qa-item">
+        <input type="checkbox" id="q8" class="qa-toggle">
+        <label for="q8" class="qa-question">Q. 海運市況の予測精度を上げるために重視すべきデータは何ですか？</label>
+        <div class="qa-answer">
+          海運市況の予測精度向上には以下のデータが重要です：①貿易統計・輸出入データ（特に大口貨物の動向）②船舶の新造発注残と竣工予定（供給面）③主要港湾の混雑状況・待機船舶数④燃料価格動向⑤主要国の経済指標（GDP、製造業PMIなど）⑥季節要因（穀物の収穫期など）⑦地政学的リスク（運河閉鎖、港湾ストライキなど）。特に供給と需要のバランスが運賃を左右するため、船腹供給量の変化（解撤状況を含む）と各国の輸出入需要（中国など主要国の政策変更）の双方をモニタリングすることが重要です。また、船舶の位置情報（AISデータ）からリアルタイムの需給状況を把握することも精度向上に寄与します。
+        </div>
+      </div>
+    </div>
+    
+    <a href="#toc" class="back-to-toc">▲ 目次に戻る</a>
+  </div>
+
+  <div class="section" id="real-estate">
+    <h2>不動産リスク（Real Estate Risk）</h2>
+    
+    <div class="summary">
+      不動産リスクは、不動産市場の変動が自社の資産価値や収益に影響を与えるリスクです。保有不動産や担保の時価や集中度を分析し、価格変動パターンやデフォルト発生をモデル化、LTV超過率などの指標で管理します。
+    </div>
+    
+    <h3>エクスポージャーの抽出・可視化手法</h3>
+    <p>不動産リスクとは、<span class="key-text">不動産市場の変動</span>（地価・建物価格・賃料など）が自社の資産価値や収益に影響を与えるリスクです。デベロッパーやREITだけでなく、一般事業会社でも自社保有の土地建物や不動産担保融資などを通じてこのリスクを負います。</p>
+    
+    <p>エクスポージャー抽出では、まず<span class="key-text">不動産関連資産・ビジネスの全容</span>を把握します。自社所有の不動産の簿価・時価、賃貸収入の状況、開発中プロジェクトの規模、保有する不動産投資商品、あるいは金融機関なら不動産ローン残高や担保評価額などを洗い出します。</p>
+    
+    <p>基本的な指標は<span class="underline">LTV（Loan to Value）</span>や<span class="underline">時価カバー率</span>です。例えば融資の場合、担保不動産の価値が30%下落したらLTVがどう変わるか（100%超えないか）をチェックします。</p>
+    
+    <p>また<span class="underline">セグメント別のエクスポージャー</span>も重要です。不動産は種類（住宅・商業・工業）や地域によって市況が異なるため、どの分野に集中しているかを可視化します。</p>
+    
+    <p>可視化では、<span class="underline">地図上へのプロット</span>や、<span class="underline">ポートフォリオ構成円グラフ</span>、<span class="underline">不動産価格指数との対比グラフ</span>などを用います。</p>
+    
+    <hr>
+    
+    <h3>モデリング手法（伝統的手法・AI/機械学習・LLM）</h3>
+    <p>不動産リスクのモデリングは、<span class="underline">価格変動パターン</span>と<span class="underline">デフォルト発生</span>の2側面があります。価格変動については、過去の不動産価格指数（例：住宅価格指数やREIT指数）の<span class="key-text">統計分析</span>が基本です：</p>
+    <ul>
+      <li><span class="underline">回帰モデル</span>：経済成長率や金利といったマクロ要因との関連</li>
+      <li><span class="underline">空間的相関</span>：地域間の関連性を組み込む</li>
+    </ul>
+    
+    <p>もう一つの側面は、<span class="underline">信用リスクモデル</span>です。不動産ローンの場合、価格下落はデフォルトや損失率（LGD）の上昇につながります：</p>
+    <ul>
+      <li><span class="underline">CreditRisk+</span>や<span class="underline">Mertonモデル</span>の応用</li>
+      <li>担保価値分布と債務残高からポートフォリオ損失分布を算出</li>
+    </ul>
+    
+    <p><span class="key-text">機械学習</span>は不動産分野でも盛んに研究されています：</p>
+    <ul>
+      <li>衛星画像や地理データ、物件属性のビッグデータを活用した価格予測</li>
+      <li><span class="underline">ライトGBM</span>や<span class="underline">XGBoost</span>を使った住宅価格予測モデル</li>
+      <li><span class="underline">LSTM</span>による時系列予測</li>
+      <li><span class="underline">気候変動リスク</span>など長期的リスク要因の評価</li>
+    </ul>
+    
+    <p><span class="key-text">LLMの活用</span>は、不動産市場のニュースや専門家レポートの分析、自社物件のテナント情報や契約書のリスク抽出などが考えられます。</p>
+    
+    <hr>
+    
+    <h3>最終的なリスク指標の算出方法</h3>
+    <p>不動産リスク指標としては以下のものがあります：</p>
+    <ul>
+      <li><span class="underline">LTV分布と超過率</span>：LTV>100%となるローン割合をストレスシナリオ下で算出</li>
+      <li><span class="underline">不動産VaR</span>：保有不動産ポートフォリオの価値変動VaR</li>
+      <li><span class="underline">期待損失とユニークリスク</span>：不動産ローンの年間期待損失額（EL）と信頼水準での損失額</li>
+      <li><span class="underline">感応度指標</span>：不動産価格▲10%で自己資本比率が何ポイント低下するかなど</li>
+      <li><span class="underline">収益への影響</span>：賃料下落が年間NOIに与える影響額</li>
+    </ul>
+    
+    <p>不動産リスク指標は企業によって様々ですが、総じて<span class="key-text">極端な市場悪化シナリオでの損失耐性</span>を測るものが多いです。</p>
+    
+    <hr>
+    
+    <h3>ビジネスへの活用（リスクヘッジ・戦略・投資判断）</h3>
+    <p>不動産リスク管理の活用面についてです：</p>
+    <ul>
+      <li><span class="underline">ポートフォリオ戦略</span>：地域・用途の分散でリスクを低減</li>
+      <li><span class="underline">ヘッジ手段</span>：不動産デリバティブ（例：不動産指数連動スワップや先物）の活用</li>
+      <li><span class="underline">投資判断</span>：十分なストレス余裕を持った案件への投資</li>
+      <li><span class="underline">資本・財務戦略</span>：資産売却や資本増強などの機動的な資本調整</li>
+    </ul>
+    
+    <div class="qa-container">
+      <div class="qa-item">
+        <input type="checkbox" id="q9" class="qa-toggle">
+        <label for="q9" class="qa-question">Q. 不動産価格下落リスクをヘッジする実用的な方法はありますか？</label>
+        <div class="qa-answer">
+          不動産価格下落リスクをヘッジする実用的な方法には以下があります：①ポートフォリオの地域・用途分散（例：オフィスのみならず住宅・物流も保有）②賃貸契約の長期化・定期借家化による収益の安定化③不動産信託受益権化して一部売却（部分的なエグジット）④REIT指数先物やオプションでREITポートフォリオをヘッジ（流動性の高い市場のみ）⑤売却オプション付きの共同事業スキーム構築（パートナーに将来の買取権を付与）。直接的な不動産デリバティブ市場は流動性が限られるため、実務的には分散投資や長期安定契約の確保、段階的な開発といった事業戦略面での対応が中心となります。また、レバレッジを抑えて財務バッファーを確保することも重要な間接的ヘッジ手段です。
+        </div>
+      </div>
+      
+      <div class="qa-item">
+        <input type="checkbox" id="q10" class="qa-toggle">
+        <label for="q10" class="qa-question">Q. 不動産価格の下落が企業の信用格付けに与える影響はどの程度ですか？</label>
+        <div class="qa-answer">
+          不動産価格下落の信用格付けへの影響は以下の要素で決まります：①不動産資産の総資産に占める比率②レバレッジ（LTV）の水準③収益構造における賃料収入の重要性④含み損の自己資本に対する大きさ。例えば、不動産デベロッパーやREITでは、30%の価格下落で含み損が自己資本の50%を超えると、1～2ノッチの格下げ要因になりえます。一般事業会社でも不動産保有が多い場合、資産評価損や減損による自己資本毀損が格付け低下につながります。特に注意すべきは、不動産価格下落と同時に起きる流動性収縮で、これにより借り換えが困難になると格付けは急落することがあります。格付機関は通常、20-30%の価格下落シナリオを想定し、そのストレス下でも債務返済能力が維持できるかを重視します。
+        </div>
+      </div>
+    </div>
+    
+    <a href="#toc" class="back-to-toc">▲ 目次に戻る</a>
+  </div>
+
+  <div class="section" id="electricity">
+    <h2>電力価格リスク（Electricity Price Risk）</h2>
+    
+    <div class="summary">
+      電力価格リスクとは、電力の市場価格の変動によって発電事業者や大口需要家の収益が変動するリスクです。需給ギャップを把握し、ジャンプ拡散モデルやAIで価格変動を分析、CFaRなどの指標で管理します。
+    </div>
+    
+    <h3>エクスポージャーの抽出・可視化手法</h3>
+    <p>電力価格リスクとは、<span class="key-text">電力の市場価格（スポット価格や卸価格）の変動</span>によって発電事業者や大口需要家の収益が変動するリスクです。電力は特殊な商品で、需給逼迫時に価格が急騰・乱高下する特性があります。</p>
+    
+    <p>エクスポージャー抽出では、まず<span class="key-text">想定需要量・供給量</span>を時系列で把握します。例えば電力会社なら「自社発電○MW・自社需要△MWを毎時保有」というポジションです。小売電気事業者であれば、顧客への販売契約電力量と、自社確保済みの調達電力量を比較し、不足分をスポット市場から買う必要があるかを見ます。この<span class="underline">需給ギャップ</span>が市場価格リスクに晒される量です。</p>
+    
+    <p>次に、市場価格が変動した場合の<span class="underline">収支影響</span>を試算します。例えば「平日時昼間の市場価格が10€/MWh上昇すると、1日あたり○万€の追加費用（または利益）」という感応度を計算します。</p>
+    
+    <p>可視化としては、<span class="underline">負荷曲線に沿ったポジション表</span>を用いることがあります。24時間×典型日で、自社の需要・供給・不足（市場からの購入）をグラフ化し、その不足部分に価格リスクがあることを示します。</p>
+    
+    <hr>
+    
+    <h3>モデリング手法（伝統的手法・AI/機械学習・LLM）</h3>
+    <p>電力価格リスクのモデリングは難易度が高い領域ですが、以下のような手法があります：</p>
+    <ul>
+      <li><span class="underline">時系列モデル</span>：<span class="key-text">ジャンプ拡散モデル</span>や<span class="key-text">マルコフ連鎖モデル</span>で価格の急変動を表現</li>
+      <li><span class="underline">負荷と供給のシミュレーション</span>：需要と供給のランダムパスを生成し価格を出力</li>
+      <li><span class="underline">ヒストリカルシナリオ</span>：過去の極端事例の価格パターンをシナリオとして使用</li>
+    </ul>
+    
+    <p><span class="key-text">機械学習</span>の進展は、電力需要予測や価格予測で著しい成果を上げています：</p>
+    <ul>
+      <li>気象データや経済データを取り入れた勾配ブースティングやニューラルネット</li>
+      <li>Transformerベースの深層学習モデルでスポットと先物価格を予測</li>
+      <li><span class="underline">異常事象の検知</span>：発電所の故障や送電断線などの早期察知</li>
+    </ul>
+    
+    <p>LLMの活用としては、規制情報のモニタリングがあります。電力市場は規制や政策の影響が大きいため、新しい法律や規制の文書をLLMで要約・分析し、リスク要因を洗い出すことが役立つでしょう。</p>
+    
+    <hr>
+    
+    <h3>最終的なリスク指標の算出方法</h3>
+    <p>電力価格リスクの代表指標には<span class="key-text">Cash-Flow-at-Risk（CFaR）</span>と<span class="key-text">Earnings-at-Risk（EaR）</span>があります。例えば「来年度の95%CFaRは△○億円」であれば、通常条件から外れた悪いシナリオでもキャッシュフロー減少はその程度に収まる見通し、という意味になります。</p>
+    
+    <p>もう一つ重要なのが<span class="underline">PFE（Potential Future Exposure）</span>です。これは将来時点での<span class="underline">想定最大債務</span>で、例えばデリバティブ取引先が破綻した場合にどれだけの支払いを受け取れなくなる可能性があるかを示します。</p>
+    
+    <p>電力トレーディングにおいては、<span class="underline">日次VaR</span>も管理されています。また特有の指標としては、<span class="underline">デルタ・ガンマ解析</span>に似た<span class="underline">ポジションの特性値</span>があります。</p>
+    
+    <hr>
+    
+    <h3>ビジネスへの活用（リスクヘッジ・戦略・投資判断）</h3>
+    <p>電力価格リスク管理のビジネス活用例です：</p>
+    <ul>
+      <li><span class="underline">ヘッジと調達戦略</span>：<span class="key-text">先物市場や長期PPA（電力購入契約）</span>で価格を固定化</li>
+      <li><span class="underline">モンテカルロシミュレーションによる戦略策定</span>：<span class="key-text">最適ポートフォリオ</span>構成の決定</li>
+      <li><span class="underline">投資判断</span>：ベースロード電源とピーク電源の最適組み合わせ</li>
+      <li><span class="underline">投資適格等級の維持</span>：ヘッジによる<span class="key-text">予見可能な収益構造</span>の構築</li>
+    </ul>
+    
+    <div class="qa-container">
+      <div class="qa-item">
+        <input type="checkbox" id="q11" class="qa-toggle">
+        <label for="q11" class="qa-question">Q. 電力価格変動に対する長期PPA（電力購入契約）のメリットとデメリットは？</label>
+        <div class="qa-answer">
+          長期PPAのメリットは：①価格安定性（予見可能なコストまたは収入）②予算計画の確実性向上③短期的な市場変動に左右されない事業計画④再エネ由来電力の場合、環境目標達成の証明にもなる⑤発電事業者にとってファイナンス確保の助けになる。
+
+          一方、デメリットは：①市場価格が有利に動いた場合の機会損失（固定価格で買った側が損する場合も）②長期契約のため途中解約の柔軟性が低い③カウンターパーティリスク（相手の信用リスク）④一部の長期PPAには最低引取量条項があり、需要減少時にペナルティが発生する可能性。
+
+          理想的には、需要または供給の一部を長期PPAで固定し、残りを短中期契約やスポット市場で調達するバランス戦略が有効です。
+        </div>
+      </div>
+      
+      <div class="qa-item">
+        <input type="checkbox" id="q12" class="qa-toggle">
+        <label for="q12" class="qa-question">Q. 電力価格リスクの評価において特に注意すべき要素は何ですか？</label>
+        <div class="qa-answer">
+          電力価格リスク評価で特に注意すべき要素は：①極端な価格スパイク（需給ひっ迫時に数十倍に高騰することも）②季節性・時間帯による大きな変動（日中と夜間、夏冬と春秋で大きく異なる）③天候依存性（気温や日照・風力で需給が変動）④燃料価格との相関（特に天然ガス価格との連動）⑤送電制約（地域間の価格差発生要因）⑥規制変更リスク（市場設計や価格上限規制の変更）⑦再生可能エネルギーの変動性（出力の予測困難性）。
+
+          特に電力はストレージが難しく需給を常に一致させる必要があるため、短期的な需給ショックが即座に価格に反映される特性があります。このため、通常の商品よりも極端な価格シナリオを想定したストレステストが重要です。また、季節・時間別の細かい分析が不可欠です。
+        </div>
+      </div>
+    </div>
+    
+    <a href="#toc" class="back-to-toc">▲ 目次に戻る</a>
+  </div>
+
+  <div class="section" id="credit">
+    <h2>信用リスク（Credit Risk）</h2>
+    
+    <div class="summary">
+      信用リスクは、取引先や債務者がデフォルトに陥り損失が発生するリスクです。カウンターパーティ別のエクスポージャーと信用度を把握し、統計モデルやAIで分析、PDやVaRなどの指標で管理します。
+    </div>
+    
+    <h3>エクスポージャーの抽出・可視化手法</h3>
+    <p>信用リスクは、<span class="key-text">取引先や債務者が債務不履行（デフォルト）に陥り損失が発生するリスク</span>です。銀行の貸出、債券投資、企業の売掛金、保証など幅広い取引で存在します。エクスポージャー抽出の基本は、<span class="underline">カウンターパーティごとのエクスポージャー残高</span>と<span class="underline">信用度</span>を把握することです。</p>
+    
+    <p>例えば銀行では全貸出先の貸出残高を一覧にし、それぞれの信用格付（内部格付や外部格付）や担保・保証の有無を整理します。これにより、<span class="key-text">どこに集中してどれだけリスクを取っているか</span>が見えます。理想は<span class="underline">信用リスクマップ</span>のような形で、縦軸に信用格付、横軸に残高規模をプロットし、自社ポートフォリオのリスク分布を視覚化することです。</p>
+    
+    <p>また<span class="underline">業種・地域別の分散状況</span>も重要です。信用イベントは景気や業界トレンドに左右されるため、特定業界に偏った貸出は、その業界不振時に同時多発的な損失を被る可能性があります。</p>
+    
+    <p>信用リスクは<span class="underline">オフバランス</span>にも潜みます。たとえばデリバティブ取引では正味受取マークトゥマーケットが将来相手から回収不能になるリスク（カウンターパーティリスク）があります。</p>
+    
+    <p>可視化では、<span class="underline">信用リスクヒートマップ</span>（縦軸：格付、横軸：残高レンジで色分け）や、<span class="underline">トップ10エクスポージャーリスト</span>（最大残高の相手先一覧とその信用度）などが有用です。</p>
+    
+    <hr>
+    
+    <h3>モデリング手法（伝統的手法・AI/機械学習・LLM）</h3>
+    <p><span class="key-text">伝統的手法</span>としては、大きく<span class="underline">個別リスク評価モデル</span>と<span class="underline">ポートフォリオリスクモデル</span>に分かれます：</p>
+    <ul>
+      <li>個別リスク評価：<span class="underline">スコアカードモデル</span>や<span class="underline">ロジスティック回帰</span>による<span class="underline">信用スコアリング</span></li>
+      <li>ポートフォリオリスク：<span class="underline">CreditMetrics</span>や<span class="underline">CreditRisk+</span>などのモデル</li>
+    </ul>
+    
+    <p><span class="key-text">機械学習の導入</span>により、信用リスクモデルも進化しています：</p>
+    <ul>
+      <li>勘定系データや行動履歴などビッグデータを用いた<span class="underline">勾配ブースティング</span>や<span class="underline">ニューラルネット</span></li>
+      <li><span class="underline">Explainable AI</span>の技術で、どういう要因でそのスコアになったか説明を付与</li>
+      <li><span class="underline">早期警戒システム</span>：取引先の決算やニュース、取引行動データをリアルタイム解析</li>
+    </ul>
+    
+    <p><span class="key-text">LLMの活用</span>も新たな潮流です：</p>
+    <ul>
+      <li>与信審査で提出される事業計画書や財務諸表の注記をLLMが読み込み分析</li>
+      <li>ローン審査で行員のメモや面談記録などテキストをAIが評価</li>
+      <li>ニュース記事やSNSから風評リスクや詐欺兆候を検知</li>
+    </ul>
+    
+    <hr>
+    
+    <h3>最終的なリスク指標の算出方法</h3>
+    <p>信用リスクの指標は多層的です。主なものを挙げます：</p>
+    <ul>
+      <li><span class="underline">PD（デフォルト確率）</span>：個々のカウンターパーティのデフォルト確率</li>
+      <li><span class="underline">LGD（損失率）</span>：デフォルトした場合にどの割合が損失になるか</li>
+      <li><span class="underline">期待損失（EL）</span>：Exposure at Default (EAD) × PD × LGDで計算される平均的損失</li>
+      <li><span class="underline">信用VaR/Unexpected Loss</span>：ELを超える<span class="key-text">不確実な損失</span>部分</li>
+      <li><span class="underline">集中度指標</span>：ポートフォリオの分散度合い（最大エクスポージャー比率など）</li>
+      <li><span class="underline">Credit Rating Transition Matrix</span>：格付の遷移確率表</li>
+    </ul>
+    
+    <hr>
+    
+    <h3>ビジネスへの活用（リスクヘッジ・戦略・投資判断）</h3>
+    <p>信用リスク管理のビジネス活用は、<span class="key-text">貸倒損失の低減と健全な取引関係維持</span>が中心です：</p>
+    <ul>
+      <li><span class="underline">与信限度とモニタリング</span>：取引先ごとに<span class="key-text">与信枠</span>を設定</li>
+      <li><span class="underline">ポートフォリオ調整</span>：業種集中や地域集中が判明したら方針変更</li>
+      <li><span class="underline">ヘッジ戦略</span>：<span class="key-text">クレジットデリバティブ</span>や<span class="key-text">信用保険</span>でリスク移転</li>
+      <li><span class="underline">プライシングと引当</span>：リスクモデルで算出したPDやELを取引条件に反映</li>
+      <li><span class="underline">投資判断</span>：M&Aや新規事業でも信用リスク視点で評価</li>
+    </ul>
+    
+    <div class="qa-container">
+      <div class="qa-item">
+        <input type="checkbox" id="q13" class="qa-toggle">
+        <label for="q13" class="qa-question">Q. 中小企業が取引先の信用リスクを評価する簡易的な方法はありますか？</label>
+        <div class="qa-answer">
+          中小企業向けの簡易的な信用リスク評価方法には以下があります：①商業信用調査会社のレポート活用（東京商工リサーチ、帝国データバンクなど）②公開情報チェック（登記簿、決算公告、官報、求人情報などから経営状況を類推）③取引実績の履歴管理（支払遅延の有無・頻度）④基本的な財務比率の確認（自己資本比率、流動比率、固定長期適合率など）⑤取引銀行や共通取引先からの間接的な情報収集⑥経営者の評判や過去の経歴確認。
+
+          重要なのは、一つの情報源に頼らず複数の視点から総合的に判断することです。また、取引開始時は小口から始め、徐々に取引額を増やしていく段階的アプローチも有効です。定期的なモニタリングと与信限度額の設定は、規模に関わらずすべての企業で実施すべき基本的な対策です。
+        </div>
+      </div>
+      
+      <div class="qa-item">
+        <input type="checkbox" id="q14" class="qa-toggle">
+        <label for="q14" class="qa-question">Q. クレジットデフォルトスワップ（CDS）はどのような仕組みで信用リスクをヘッジするのですか？</label>
+        <div class="qa-answer">
+          クレジットデフォルトスワップ（CDS）は、債権者（プロテクションの買い手）がデフォルトリスクをヘッジするためにプレミアムを支払い、相手方（プロテクションの売り手）が参照企業のデフォルト時に損失を補填する契約です。
+
+          具体的な仕組み：
+          1. プロテクション買い手は定期的にプレミアム（通常は参照債務の想定元本に対して年率数十～数百bp）を売り手に支払う
+          2. 契約期間中に「信用事由」（デフォルト、破産申請、債務再編等）が発生した場合、売り手は買い手に損失補填を行う
+          3. 決済方法には「現物決済」（債券を額面で買い取る）と「現金決済」（額面と市場価値の差額を支払う）がある
+
+          CDSの特徴として、実際に債権を保有していなくても契約できること、参照企業が関与せずに取引できることがあります。これにより、特定企業への信用エクスポージャーを柔軟に調整でき、貸出関係を維持したまま信用リスクだけを移転できます。
+        </div>
+      </div>
+    </div>
+    
+    <a href="#toc" class="back-to-toc">▲ 目次に戻る</a>
+  </div>
+
+  <div class="section" id="equity">
+    <h2>株価変動リスク（Equity Price Risk）</h2>
+    
+    <div class="summary">
+      株価変動リスクとは、株式市場の価格変動によってポートフォリオや企業価値が影響を受けるリスクです。保有株式の時価総額や配分を把握し、ポートフォリオ理論やAIで分析、VaRやベータなどの指標で管理します。
+    </div>
+    
+    <h3>エクスポージャーの抽出・可視化手法</h3>
+    <p>株価変動リスクとは、<span class="key-text">株式市場の価格変動</span>によってポートフォリオや企業価値が影響を受けるリスクです。証券投資を行う機関投資家はもちろん、一般事業会社でも年金資産や他社株保有、あるいは自社株価格そのものにリスクがあります。</p>
+    
+    <p>エクスポージャー抽出では、まず<span class="underline">保有株式リスト</span>を作成します。銘柄名、株数、時価総額、評価損益などを整理し、ポートフォリオ全体の<span class="underline">時価総額</span>と<span class="underline">セクター配分</span>、<span class="underline">地域配分</span>などを把握します。</p>
+    
+    <p>また、自社の<span class="underline">市場ベータ</span>を見ることもあります。企業の業績や株価が市場全体とどの程度連動するか（ベータ値）を算出すると、間接的に自社の経営が株式市場変動に晒されている度合いが分かります。</p>
+    
+    <p>ポートフォリオを運用している場合、<span class="underline">スタイル分析</span>によるエクスポージャー分解も行われます。例えば<span class="underline">ファクターモデル</span>で、自社ポートフォリオのリスク要因（市場、バリュー、サイズなど）へのエクスポージャーを推計します。</p>
+    
+    <p>可視化では、<span class="underline">ポートフォリオの構成比グラフ</span>（地域・セクター）や<span class="underline">リスク寄与度チャート</span>を用います。</p>
+    
+    <hr>
+    
+    <h3>モデリング手法（伝統的手法・AI/機械学習・LLM）</h3>
+    <p>株価変動リスクのモデリングは、<span class="key-text">金融ポートフォリオ理論</span>が発達した分野です。伝統的には<span class="underline">平均分散法則</span>に基づくポートフォリオモデルが使われます：</p>
+    <ul>
+      <li>マーコウィッツの平均・分散モデルで、共分散行列を推定しポートフォリオリスクを計測</li>
+      <li><span class="underline">ファクターモデル</span>：<span class="key-text">CAPM</span>、Fama-Frenchの<span class="key-text">3ファクター</span>など</li>
+      <li><span class="underline">VaR</span>：ヒストリカルシミュレーションやモンテカルロで損失分布を推定</li>
+      <li><span class="underline">GARCHモデル</span>：時間とともに変動するボラティリティを推定</li>
+    </ul>
+    
+    <p><span class="key-text">機械学習</span>は主にアルゴリズム取引や予測の領域で活用されます：</p>
+    <ul>
+      <li><span class="underline">ディープラーニング</span>で市場の非線形ダイナミクスをモデル化</li>
+      <li>MLで<span class="underline">高次元の共分散構造</span>を学習</li>
+      <li><span class="underline">強化学習</span>を用いたポートフォリオリバランス戦略</li>
+    </ul>
+    
+    <p><span class="key-text">LLMの活用</span>では、定性情報の分析に進展があります：</p>
+    <ul>
+      <li>ニュースヘッドラインから株価動向を予測するためにLLMを使用</li>
+      <li>決算コールの文字起こしをLLMが分析し将来の経営行動を予測</li>
+    </ul>
+    
+    <hr>
+    
+    <h3>最終的なリスク指標の算出方法</h3>
+    <p>株価変動リスクを測る指標として以下が挙げられます：</p>
+    <ul>
+      <li><span class="underline">ポートフォリオVaR</span>：一定信頼度での一定期間損失額</li>
+      <li><span class="underline">期待ショートフォール（ES）</span>：VaRを超えたときの平均損失</li>
+      <li><span class="underline">ボラティリティ（年率標準偏差）</span>：基本的なリスク指標</li>
+      <li><span class="underline">ベータ値</span>：市場全体に対する感応度</li>
+      <li><span class="underline">最大ドローダウン</span>：一定期間内での最大のピークからボトムへの下落率</li>
+      <li><span class="underline">Sharpe比や情報比率</span>：リスクあたりリターンを示す指標</li>
+    </ul>
+    
+    <hr>
+    
+    <h3>ビジネスへの活用（リスクヘッジ・戦略・投資判断）</h3>
+    <p>株価変動リスク管理の活用例です：</p>
+    <ul>
+      <li><span class="underline">ヘッジ戦略</span>：<span class="key-text">先物・オプション</span>でポートフォリオの一部をヘッジ</li>
+      <li><span class="underline">分散投資</span>：異なる資産クラスや地域への分散で<span class="key-text">非相関なリスク要因</span>を取り入れる</li>
+      <li><span class="underline">動的なリバランス</span>：市場変動に応じてポートフォリオ構成を調整</li>
+      <li><span class="underline">投資判断</span>：株価安定化のための自己株買いなど</li>
+      <li><span class="underline">規制遵守と資本維持</span>：自己資本比率規制上のリスクアセット管理</li>
+    </ul>
+    
+    <div class="qa-container">
+      <div class="qa-item">
+        <input type="checkbox" id="q15" class="qa-toggle">
+        <label for="q15" class="qa-question">Q. 株式投資のリスク管理でベータ値をどう活用すべきですか？</label>
+        <div class="qa-answer">
+          ベータ値の活用方法には以下があります：①市場感応度の把握（β=1.5なら市場が10%下落時に15%下落の可能性）②ポートフォリオのリスク特性調整（保守的運用ならβ<1の銘柄を増やす）③相場環境に応じた戦略（上昇相場ではβ>1、下落懸念時はβ<1を選好）④セクター配分の決定（景気敏感セクターは高β、ディフェンシブセクターは低β）⑤リスク分散（様々なベータ値の銘柄を組み合わせる）。
+
+          注意点としては、ベータは過去データから算出されるため将来の関係性を完全に表すとは限らないこと、極端な市場環境下では相関構造が変化することがあります。また、個別銘柄固有のリスク（非システマティックリスク）はベータでは捉えられないため、分散投資と併用することが重要です。理想的には、ベータだけでなく、セクター・ファクターエクスポージャーも含めた多面的な分析が有効です。
+        </div>
+      </div>
+      
+      <div class="qa-item">
+        <input type="checkbox" id="q16" class="qa-toggle">
+        <label for="q16" class="qa-question">Q. 事業会社が政策保有株式のリスクを管理する最適な方法は何ですか？</label>
+        <div class="qa-answer">
+          事業会社の政策保有株式リスク管理には以下の方法があります：①保有目的と効果の定期的な検証（資本コストに見合う効果があるか）②個別銘柄の定量評価（配当利回り、株価変動率、取引関係による収益貢献度）③総量規制（政策保有株式の簿価を純資産の一定割合以下に制限）④セクター分散<!DOCTYPE html>
+
+          コーポレートガバナンス・コード改訂により政策保有株式の合理性説明責任が厳格化される中、「保有ありき」ではなく、資本効率や株主価値向上の観点からの見直しが重要です。特に金融機関など銀行規制が適用される企業では、リスクアセット管理の観点からも政策保有株式の最適化が求められています。
+        </div>
+      </div>
+    </div>
+  </div>
+
+<div class="section" id="var-calculation">
+  <h2>VaRの計算方法詳説</h2>
+  
+  <div class="summary">
+    VaR（バリュー・アット・リスク）は「一定の信頼水準で、一定保有期間に被る可能性のある最大損失額」を示す統計指標です。ヒストリカルシミュレーション法、モンテカルロシミュレーション法、分散共分散法の3つの主要計算手法があります。
+  </div>
+  
+  <h3>ヒストリカルシミュレーション法</h3>
+  <p>ヒストリカルシミュレーション法は、<span class="key-text">過去の実際の市場データを使用して将来の損失を予測する非パラメトリックな方法</span>です。特定の確率分布を仮定しないのが特徴です。</p>
+  
+  <p><span class="underline">計算プロセス</span>：</p>
+  <ol>
+    <li>過去のリスクファクター（株価、為替レート等）のデータを収集</li>
+    <li>各リスクファクターの日次変化率を計算</li>
+    <li>現在のポートフォリオに過去の変化率を適用し、仮想的な損益を算出</li>
+    <li>損益分布を作成し、指定された信頼水準に基づいてVaRを決定</li>
+  </ol>
+  
+  <p><span class="underline">利点</span>：</p>
+  <ul>
+    <li>実際の市場データを使用するため、分布の仮定が不要</li>
+    <li>ファットテール（極端な変動）や非線形リスクを捉えられる</li>
+    <li>計算が比較的簡単で直感的</li>
+  </ul>
+  
+  <p><span class="underline">欠点</span>：</p>
+  <ul>
+    <li>過去のデータに依存するため、将来の市場変動が過去と大きく異なる場合に不正確</li>
+    <li>データ期間の選択によって結果が変わる可能性がある</li>
+  </ul>
+  
+  <hr>
+  
+  <h3>モンテカルロシミュレーション法</h3>
+  <p>モンテカルロシミュレーション法は、<span class="key-text">乱数を使用してリスクファクターの将来の変動をシミュレーションする方法</span>です。様々な確率分布を適用可能です。</p>
+  
+  <p><span class="underline">計算プロセス</span>：</p>
+  <ol>
+    <li>リスクファクターの確率分布モデルを構築</li>
+    <li>乱数を生成し、多数の将来シナリオを作成</li>
+    <li>各シナリオでポートフォリオの価値を計算</li>
+    <li>損益分布を作成し、指定された信頼水準に基づいてVaRを決定</li>
+  </ol>
+  
+  <p><span class="underline">利点</span>：</p>
+  <ul>
+    <li>複雑な非線形リスクや厚尾分布に対応可能</li>
+    <li>将来の潜在的なシナリオを広範囲にカバー</li>
+    <li>リスクファクター間の相関を柔軟に扱える</li>
+  </ul>
+  
+  <p><span class="underline">欠点</span>：</p>
+  <ul>
+    <li>計算負荷が高く、大量のシミュレーションが必要</li>
+    <li>モデルの選択や仮定に依存するため、モデルリスクがある</li>
+    <li>パラメータの推定が難しい場合がある</li>
+  </ul>
+  
+  <hr>
+  
+  <h3>分散共分散法（デルタ法）</h3>
+  <p>分散共分散法は、<span class="key-text">リスクファクターが正規分布に従うと仮定</span>し、リスクファクターと資産価値の関係が線形（デルタが一定）と仮定する方法です。</p>
+  
+  <p><span class="underline">計算プロセス</span>：</p>
+  <ol>
+    <li>リスクファクターの平均と標準偏差を計算</li>
+    <li>ポートフォリオのデルタ（感応度）を計算</li>
+    <li>以下の公式でVaRを算出：<br>VaR = 信頼係数 × Δ × σ<br>ここで、Δはデルタ、σは標準偏差</li>
+  </ol>
+  
+  <p><span class="underline">利点</span>：</p>
+  <ul>
+    <li>計算が非常に簡単で高速</li>
+    <li>少ないデータでも計算可能</li>
+    <li>直感的に理解しやすい</li>
+  </ul>
+  
+  <p><span class="underline">欠点</span>：</p>
+  <ul>
+    <li>正規分布の仮定が現実の市場と合わない場合がある</li>
+    <li>非線形リスク（オプション等）に対応できない</li>
+    <li>極端な市場変動を過小評価する傾向がある</li>
+  </ul>
+  
+  <div class="qa-container">
+    <div class="qa-item">
+      <input type="checkbox" id="q17" class="qa-toggle">
+      <label for="q17" class="qa-question">Q. どの計算手法を選ぶべきですか？</label>
+      <div class="qa-answer">
+        最適な計算手法の選択は以下の要素によって決まります：①ポートフォリオの特性（オプションなどの非線形商品の有無）②リスク管理の目的（規制対応か内部管理か）③計算の頻度と速度の要件④利用可能なデータと計算リソース。
+
+        一般的には、線形ポートフォリオの場合は分散共分散法が計算効率と精度のバランスが良いです。非線形商品（オプションなど）を多く含む場合はモンテカルロシミュレーションが適しています。市場の極端な動きに注目したい場合はヒストリカルシミュレーションが有効です。
+
+        実務では、これらの手法を併用して比較検証することが推奨されます。例えば、日次モニタリングには分散共分散法を使い、月次の詳細分析にはモンテカルロシミュレーションを用いるといった使い分けも効果的です。
+      </div>
+    </div>
+    
+    <div class="qa-item">
+      <input type="checkbox" id="q18" class="qa-toggle">
+      <label for="q18" class="qa-question">Q. VaRの限界と対策は何ですか？</label>
+      <div class="qa-answer">
+        VaRの主な限界と対策は以下の通りです：
+
+        【限界】
+        ①テールリスクの過小評価：極端な市場変動を捉えきれない
+        ②流動性リスクの無視：市場流動性の低下時のコスト増加を考慮していない
+        ③信頼区間外の損失規模が不明：最悪ケースの大きさがわからない
+        ④モデルリスク：計算手法や前提によって結果が大きく変わる
+
+        【対策】
+        ①期待ショートフォール（ES）：VaRを超える場合の平均損失額を計算し、テールリスクを評価
+        ②ストレステスト：過去の危機や極端なシナリオでの損失を計算
+        ③複数手法の併用：異なる計算手法の結果を比較
+        ④バックテスト：VaRの予測と実際の損益を継続的に比較検証
+        
+        これらの対策を組み合わせることで、VaRの限界を補完した包括的なリスク管理が可能になります。
+      </div>
+    </div>
+  </div>
+  
+  <a href="#toc" class="back-to-toc">▲ 目次に戻る</a>
+</div>
+
+<div class="section" id="rate-models">
+  <h2>金利モデル詳説</h2>
+  
+  <div class="summary">
+    金利モデルは、金利の確率過程を表現する数学的なモデルで、金融商品の評価やリスク管理に利用されます。代表的なモデルとしてVasicekモデル、Nelson-Siegelモデル、CIRモデルがあります。
+  </div>
+  
+  <h3>Vasicekモデル</h3>
+  <p>Vasicekモデルは、1977年にOldrich Vasicekによって提案された<span class="key-text">短期金利モデル</span>です。</p>
+  
+  <p><span class="underline">数式</span>：</p>
+  <p>Vasicekモデルは以下の確率微分方程式で表されます：</p>
+  <p>dr(t) = a(θ - r(t))dt + σdW(t)</p>
+  <p>ここで、r(t)は時刻tにおける短期金利、a, θ, σは正の定数、W(t)はウィーナー過程です。</p>
+  
+  <p><span class="underline">特徴</span>：</p>
+  <ul>
+    <li><span class="key-text">平均回帰性</span>：金利は長期的な平均水準θに向かって回帰する傾向がある</li>
+    <li><span class="key-text">正規分布</span>：金利の変動が正規分布に従う</li>
+    <li><span class="key-text">解析解の存在</span>：割引債価格やオプション価格に対して解析解が存在する</li>
+  </ul>
+  
+  <p><span class="underline">利点と欠点</span>：</p>
+  <ul>
+    <li>【利点】シンプルさ：モデルが直感的で理解しやすい</li>
+    <li>【利点】計算の容易さ：解析解が存在するため、計算が比較的容易</li>
+    <li>【欠点】負の金利：金利が負の値をとる可能性がある</li>
+    <li>【欠点】現実のイールドカーブとの不整合：モデルがすべての満期の金利を正確に表現できない</li>
+  </ul>
+  
+  <hr>
+  
+  <h3>Nelson-Siegelモデル</h3>
+  <p>Nelson-Siegelモデルは、1987年にCharles NelsonとAndrew Siegelによって提案された<span class="key-text">イールドカーブモデル</span>です。</p>
+  
+  <p><span class="underline">数式</span>：</p>
+  <p>Nelson-Siegelモデルのイールドカーブは以下の式で表されます：</p>
+  <p>y(t) = β₀ + β₁((1-e^(-λt))/(λt)) + β₂((1-e^(-λt))/(λt) - e^(-λt))</p>
+  <p>ここで、y(t)は満期tの金利、β₀, β₁, β₂, λはパラメータです。</p>
+  
+  <p><span class="underline">特徴</span>：</p>
+  <ul>
+    <li><span class="key-text">フレキシビリティ</span>：様々な形状のイールドカーブを表現できる</li>
+    <li><span class="key-text">パラメータの解釈</span>：各パラメータが経済的な意味を持つ</li>
+    <li><span class="key-text">外挿性</span>：観測されていない満期の金利を推定できる</li>
+  </ul>
+  
+  <p><span class="underline">利点と欠点</span>：</p>
+  <ul>
+    <li>【利点】少ないパラメータ：4つのパラメータでイールドカーブ全体を表現できる</li>
+    <li>【利点】実務での使いやすさ：中央銀行や金融機関で広く使用されている</li>
+    <li>【欠点】動的性の欠如：時間経過に伴うイールドカーブの変化を直接モデル化できない</li>
+    <li>【欠点】裁定機会の可能性：モデルが必ずしも無裁定条件を満たさない</li>
+  </ul>
+  
+  <hr>
+  
+  <h3>CIRモデル</h3>
+  <p>CIR（Cox-Ingersoll-Ross）モデルは、1985年にJohn Cox、Jonathan Ingersoll、Stephen Rossによって提案された<span class="key-text">短期金利モデル</span>です。</p>
+  
+  <p><span class="underline">数式</span>：</p>
+  <p>CIRモデルは以下の確率微分方程式で表されます：</p>
+  <p>dr(t) = a(θ - r(t))dt + σ√r(t)dW(t)</p>
+  <p>ここで、r(t)は時刻tにおける短期金利、a, θ, σは正の定数、W(t)はウィーナー過程です。</p>
+  
+  <p><span class="underline">特徴</span>：</p>
+  <ul>
+    <li><span class="key-text">平均回帰性</span>：Vasicekモデルと同様に、金利は長期的な平均水準θに向かって回帰する</li>
+    <li><span class="key-text">非負金利</span>：金利が非負であることを保証する（Feller条件：2aθ ≥ σ²）</li>
+    <li><span class="key-text">非心カイ2乗分布</span>：金利の分布が非心カイ2乗分布に従う</li>
+  </ul>
+  
+  <p><span class="underline">利点と欠点</span>：</p>
+  <ul>
+    <li>【利点】非負金利：現実の金利をより適切にモデル化できる</li>
+    <li>【利点】ボラティリティの変動：金利水準に応じてボラティリティが変化する</li>
+    <li>【利点】解析解の存在：割引債価格やオプション価格に対して解析解が存在する</li>
+    <li>【欠点】複雑性：Vasicekモデルに比べて計算がやや複雑になる</li>
+    <li>【欠点】パラメータ推定の困難さ：非線形性のため、パラメータの推定が難しい場合がある</li>
+  </ul>
+  
+  <div class="qa-container">
+    <div class="qa-item">
+      <input type="checkbox" id="q19" class="qa-toggle">
+      <label for="q19" class="qa-question">Q. 金利モデルの実務での使い分けはどうしますか？</label>
+      <div class="qa-answer">
+        実務での金利モデルの使い分けは以下の通りです：
+
+        【イールドカーブの推定・補間】
+        • Nelson-Siegelモデル：観測データの少ない満期の金利を推定する場合
+        • Svensson拡張モデル：より複雑なイールドカーブ形状の場合
+
+        【金利派生商品の価格付け】
+        • Vasicekモデル：単純な金利派生商品（特に解析解が必要な場合）
+        • CIRモデル：負の金利確率を避けたい場合の短期金利モデリング
+        • Hull-Whiteモデル：現在のイールドカーブに正確にフィットさせたい場合
+
+        【リスク管理】
+        • 多因子モデル：イールドカーブの複雑な変化や相関を捉える必要がある場合
+        • GARCH型モデル：金利のボラティリティ変動を予測したい場合
+
+        現実的には、目的や対象商品、市場環境によって複数のモデルを併用し、結果を比較検証することが一般的です。
+      </div>
+    </div>
+    
+    <div class="qa-item">
+      <input type="checkbox" id="q20" class="qa-toggle">
+      <label for="q20" class="qa-question">Q. 金利モデルによるリスク分析の実例を教えてください</label>
+      <div class="qa-answer">
+        金利モデルを用いたリスク分析の実例：
+
+        【銀行ALM】
+        銀行は短期の預金で調達し長期の貸出や債券で運用することで金利期間ミスマッチを抱えています。金利モデルを用いて金利上昇シナリオ下での経済価値減少額（EVE）や将来の純金利収益への影響（NII）を計算し、リスク量を把握します。例えば、イールドカーブの平行上昇・フラット化・スティープ化などの複数シナリオでのシミュレーションにより、最大損失ポイントを特定します。
+
+        【債券ポートフォリオ】
+        機関投資家は金利モデルを使ってポートフォリオの金利リスクを分析します。例えば、CIRモデルで金利パスを数千本シミュレートし、その下での債券価格変動からVaRを算出します。特に複雑な債券（期限前償還オプション付きMBSなど）の場合、精緻な金利モデルが必須となります。
+
+        【デリバティブのヘッジ】
+        金利スワップディーラーはHull-Whiteなどのモデルを用いて、ボラティリティの変化に対するリスク感応度（ベガ）を計算し、必要なヘッジポジションを決定します。また、金利オプションのヘッジでは、金利モデルから計算されるグリークス（デルタ、ガンマなど）に基づいてリスク管理します。
+      </div>
+    </div>
+  </div>
+  
+  <a href="#toc" class="back-to-toc">▲ 目次に戻る</a>
+</div>
+
+<div class="section" id="jump-models">
+  <h2>ジャンプ拡散型・マルコフモデル</h2>
+  
+  <div class="summary">
+    ジャンプ拡散型モデルとマルコフスイッチングモデルは、市場の急激な変動や構造変化を表現できる確率モデルです。金融市場やエネルギー市場などの複雑な動きを捉えるのに有効です。
+  </div>
+  
+  <h3>ジャンプ拡散型モデル</h3>
+  <p>ジャンプ拡散型モデルは、<span class="key-text">資産価格の連続的な変動と突発的な大きな変化（ジャンプ）の両方を表現できるモデル</span>です。</p>
+  
+  <p><span class="underline">数学的表現</span>：</p>
+  <p>基本的なジャンプ拡散モデルは以下のように表されます：</p>
+  <p>dS(t) = μS(t)dt + σS(t)dW(t) + S(t)dJ(t)</p>
+  <p>ここで、S(t)は資産価格、μはドリフト率、σはボラティリティ、dW(t)はウィーナー過程の増分、dJ(t)はポアソン過程を用いてモデル化されたジャンプ成分です。</p>
+  
+  <p><span class="underline">特徴と利点</span>：</p>
+  <ul>
+    <li>市場の急激な変動を表現できる</li>
+    <li>オプション価格のボラティリティ・スマイルを説明できる</li>
+    <li>テールリスクの評価に有効</li>
+  </ul>
+  
+  <p><span class="underline">欠点</span>：</p>
+  <ul>
+    <li>パラメータ推定が複雑</li>
+    <li>ジャンプの頻度と大きさの適切な設定が難しい</li>
+  </ul>
+  
+  <p><span class="underline">実用例</span>：</p>
+  <ul>
+    <li>エキゾチックオプションの価格付け</li>
+    <li>エネルギー価格のモデリング</li>
+    <li>リスク管理とポートフォリオ最適化</li>
+  </ul>
+  
+  <hr>
+  
+  <h3>マルコフスイッチングモデル</h3>
+  <p>マルコフスイッチングモデルは、<span class="key-text">経済や市場が複数の「状態」または「レジーム」の間を遷移するという考えに基づいたモデル</span>です。</p>
+  
+  <p><span class="underline">数学的表現</span>：</p>
+  <p>基本的なマルコフスイッチング自己回帰モデルは以下のように表されます：</p>
+  <p>y_t = μ_{s_t} + Σ_i φ_i(y_{t-i} - μ_{s_{t-i}}) + ε_t</p>
+  <p>ここで、y_tは観測値、μ_{s_t}は現在の状態s_tに依存する平均、φ_iは自己回帰係数、ε_tは誤差項です。</p>
+  
+  <p><span class="underline">特徴と利点</span>：</p>
+  <ul>
+    <li>経済の構造変化や市場のレジーム転換を捉えられる</li>
+    <li>非線形な動きを表現できる</li>
+    <li>予測精度の向上が期待できる</li>
+  </ul>
+  
+  <p><span class="underline">欠点</span>：</p>
+  <ul>
+    <li>モデルの複雑さによっては推定が困難</li>
+    <li>状態数の決定が恣意的になる可能性がある</li>
+  </ul>
+  
+  <p><span class="underline">実用例</span>：</p>
+  <ul>
+    <li>景気循環の分析</li>
+    <li>株式市場のボラティリティ予測</li>
+    <li>エネルギー価格の予測</li>
+    <li>金融政策の効果分析</li>
+  </ul>
+  
+  <div class="qa-container">
+    <div class="qa-item">
+      <input type="checkbox" id="q21" class="qa-toggle">
+      <label for="q21" class="qa-question">Q. ジャンプ拡散モデルとマルコフスイッチングモデルの違いは何ですか？</label>
+      <div class="qa-answer">
+        ジャンプ拡散モデルとマルコフスイッチングモデルの主な違い：
+
+        【変動の捉え方】
+        • ジャンプ拡散モデル：通常は連続的な変動をベースとしつつ、突発的なジャンプを加える
+        • マルコフスイッチングモデル：異なるレジーム（状態）間の切り替わりにより、パラメータ自体が変化
+
+        【持続性】
+        • ジャンプ拡散モデル：ジャンプは一時的な現象として扱われる
+        • マルコフスイッチングモデル：一度レジームが変わると、そのレジームが継続する期間がある
+
+        【パラメータ数】
+        • ジャンプ拡散モデル：ジャンプの強度と大きさを表す追加パラメータが必要
+        • マルコフスイッチングモデル：各レジームごとにパラメータセットが必要で、遷移確率も追加される
+
+        【適した用途】
+        • ジャンプ拡散モデル：急激な価格変動が一時的に発生するケース（市場ショックなど）
+        • マルコフスイッチングモデル：経済環境が変化し、その変化が持続するケース（景気循環など）
+      </div>
+    </div>
+    
+    <div class="qa-item">
+      <input type="checkbox" id="q22" class="qa-toggle">
+      <label for="q22" class="qa-question">Q. これらのモデルはリスク管理にどのように活用できますか？</label>
+      <div class="qa-answer">
+        これらのモデルのリスク管理への具体的な活用例：
+
+        【ストレステスト設計】
+        通常のVaRなどでは捉えきれない極端な市場変動を、ジャンプ拡散モデルで生成し、ストレスシナリオとして利用できます。例えば、エネルギー企業は電力価格のジャンプを考慮したシナリオで資金繰りテストを実施します。
+
+        【危機早期警戒】
+        マルコフスイッチングモデルは現在の市場が「低ボラティリティ状態」か「危機状態」かを確率的に判定します。これにより、危機レジームへの移行確率が高まった際に、ポートフォリオのリスク削減などの対策を早期に講じることができます。
+
+        【テールリスク計測】
+        従来のリスク指標を補完するものとして、ジャンプを考慮したVaRやエクスペクティッド・ショートフォール（ES）を計算できます。これにより、通常は見落とされがちな極端イベントのリスクをより正確に評価できます。
+
+        【動的資産配分】
+        マルコフスイッチングモデルで市場レジームを判定し、各レジームに適した資産配分に動的に調整する戦略が可能です。例えば、危機レジーム検出時にはリスク資産比率を自動的に引き下げる仕組みなどです。
+      </div>
+    </div>
+  </div>
+  
+  <a href="#toc" class="back-to-toc">▲ 目次に戻る</a>
+</div>
+
+<div class="section" id="garch-models">
+  <h2>GARCHモデル詳説</h2>
+  
+  <div class="summary">
+    GARCH（一般化自己回帰条件付き不均一分散）モデルは、時系列データのボラティリティの変動を捉えるための統計モデルです。金融市場のボラティリティ・クラスタリングを表現でき、リスク管理やオプション価格付けに広く使用されています。
+  </div>
+  
+  <h3>基本概念</h3>
+  <p>GARCHモデルは、<span class="key-text">現在のボラティリティが過去のボラティリティと過去の誤差項（ショック）に依存する</span>という考えに基づいています。基本的なGARCH(1,1)モデルは以下のように表されます：</p>
+  <p>σ²_t = ω + α·ε²_{t-1} + β·σ²_{t-1}</p>
+  <p>ここで、σ²_tは時点tにおける条件付き分散（ボラティリティ）、ε_{t-1}は前期の誤差項、ω, α, βはモデルパラメータです。</p>
+  
+  <h3>特徴と利点</h3>
+  <ul>
+    <li><span class="key-text">ボラティリティ・クラスタリング</span>：金融市場でよく観察される「ボラティリティの集中」現象を表現できる</li>
+    <li><span class="key-text">パラメータの節約</span>：ARCHモデルに比べ、より少ないパラメータでデータの2乗の相関をよく記述できる</li>
+    <li><span class="key-text">リスク管理への応用</span>：ボラティリティの予測を通じて、投資家は市場の変動に対するリスクを定量的に評価できる</li>
+    <li><span class="key-text">非線形性の表現</span>：金融市場の非線形的な動きを捉えることができる</li>
+  </ul>
+  
+  <h3>欠点</h3>
+  <ul>
+    <li><span class="key-text">パラメータ推定の複雑さ</span>：最尤法による推定が一般的ですが、計算が複雑になる場合がある</li>
+    <li><span class="key-text">モデル選択の問題</span>：適切なGARCHモデルの次数（p,q）の選択が難しい場合がある</li>
+    <li><span class="key-text">非対称性の扱い</span>：標準的なGARCHモデルは、正と負のショックの影響を対称に扱うため、レバレッジ効果などの非対称性を捉えきれない</li>
+  </ul>
+  
+  <h3>金融市場での実用例</h3>
+  <ul>
+    <li><span class="key-text">リスク管理</span>：VaR（Value at Risk）の計算に用いられる</li>
+    <li><span class="key-text">オプション価格付け</span>：ボラティリティ予測を通じて、より正確なオプション価格の算出に貢献する</li>
+    <li><span class="key-text">ポートフォリオ最適化</span>：資産配分の決定に際し、ボラティリティ予測を活用する</li>
+    <li><span class="key-text">市場動向分析</span>：金融市場の不安定性や投資家心理の変化を分析する</li>
+  </ul>
+  
+  <h3>GARCHモデルの拡張</h3>
+  <ul>
+    <li><span class="key-text">EGARCH（指数GARCH）</span>：ボラティリティの非対称性を捉えるモデル</li>
+    <li><span class="key-text">GJR-GARCH</span>：負のショックがボラティリティに与える影響を特別に扱うモデル</li>
+    <li><span class="key-text">MSGARCH（マルコフ切替GARCH）</span>：異なる市場レジームを考慮したモデル</li>
+    <li><span class="key-text">多変量GARCH</span>：複数の資産間の相関構造を分析するモデル</li>
+  </ul>
+  
+  <div class="qa-container">
+    <div class="qa-item">
+      <input type="checkbox" id="q23" class="qa-toggle">
+      <label for="q23" class="qa-question">Q. GARCH(1,1)モデルの解釈方法を具体的に教えてください</label>
+      <div class="qa-answer">
+        GARCH(1,1)モデルのパラメータには以下のような解釈があります：
+
+        σ²_t = ω + α·ε²_{t-1} + β·σ²_{t-1}
+
+        【定数項 ω】
+        長期平均分散の一部を表します。ω/(1-α-β)が長期ボラティリティの平均水準になります。通常は小さな正の値です。
+
+        【ARCHパラメータ α】
+        直前のショック（ε²_{t-1}）がどれだけ現在のボラティリティに影響するかを示します。大きいαは市場が新情報に敏感に反応することを意味します。典型的な値は0.05～0.15程度です。
+
+        【GARCHパラメータ β】
+        過去のボラティリティ（σ²_{t-1}）が持続する度合いを示します。βが大きいほどボラティリティの持続性が高く、ショックの影響が長く残ります。典型的な値は0.75～0.9程度です。
+
+        【α+β】
+        この和はボラティリティの持続性を示し、1に近いほど高持続性です。多くの金融時系列では0.95前後となり、ショックが長期間影響することを意味します。1以上だとボラティリティが発散するため、通常は1未満の制約を課します。
+      </div>
+    </div>
+    
+    <div class="qa-item">
+      <input type="checkbox" id="q24" class="qa-toggle">
+      <label for="q24" class="qa-question">Q. GARCHモデルを使ったVaR計算の実務的な手順を教えてください</label>
+      <div class="qa-answer">
+        GARCHモデルを用いたVaR計算の実務的な手順：
+
+        1. データの準備：
+        • 資産またはポートフォリオの日次リターンデータを収集（通常250～500営業日分）
+        • リターンデータの定常性を確認し、必要なら対数リターンに変換
+
+        2. モデル選択と推定：
+        • GARCH(1,1)またはEGARCHなど適切なモデルを選択
+        • 最尤法によりパラメータ（ω, α, β）を推定
+        • 情報基準（AIC, BIC）やQQ-plotなどで適合度を評価
+
+        3. ボラティリティ予測：
+        • 推定したGARCHモデルを用いて翌日（またはVaRの期間）のボラティリティσ_t+1を予測
+
+        4. VaR計算：
+        • 特定の信頼水準（例：95%）に対応する正規分布の分位点（1.65）を特定
+        • VaR = ポートフォリオ価値 × 予測ボラティリティσ_t+1 × 分位点
+        • 必要に応じて、正規分布ではなくt分布など厚尾分布を使用
+
+        5. バックテスト：
+        • 実際の損失がVaRを超える日数をカウント
+        • 例外発生率が理論上の確率（例：5%）と統計的に一致しているか検証
+
+        実務では、GARCH予測だけでなく、ヒストリカルシミュレーションとの比較や、ストレステストを併用することが一般的です。また、金融商品によってはモンテカルロシミュレーションと組み合わせることもあります。
+      </div>
+    </div>
+  </div>
+  
+  <a href="#toc" class="back-to-toc">▲ 目次に戻る</a>
+</div>
+
+<div class="section" id="merton-models">
+  <h2>Mertonモデル詳説</h2>
+  
+  <div class="summary">
+    Mertonモデルは、企業の信用リスクを評価するための構造型モデルです。企業の資産価値と負債の関係に基づいてデフォルト確率を推定し、信用リスク管理や信用デリバティブの価格付けに利用されます。
+  </div>
+  
+  <h3>モデルの基本概念</h3>
+  <p>Mertonモデルでは、<span class="key-text">企業の資産価値Vtが以下の確率微分方程式に従うと仮定</span>します：</p>
+  <p>dV_t = μV_tdt + σV_tdW_t</p>
+  <p>ここで、μは資産価値の期待成長率、σは資産価値のボラティリティ、W_tは標準ブラウン運動です。</p>
+  
+  <h3>デフォルト確率の計算</h3>
+  <p>Mertonモデルでは、<span class="key-text">負債の返済期日Tにおいて企業価値VTが負債総額Dを下回る事象をデフォルトと定義</span>します。デフォルト確率PDは以下の式で計算されます：</p>
+  <p>PD = P(V_T < D) = N(-d_2)</p>
+  <p>ここで、N(・)は標準正規分布の累積分布関数、d_2 = (ln(V_0/D) + (r - σ²/2)T) / (σ√T)、V_0は初期資産価値、rは無リスク金利です。</p>
+  
+  <h3>信用リスクモデルとしての利用</h3>
+  <p>Mertonモデルは、以下のような方法で信用リスクの評価に利用されます：</p>
+  <ul>
+    <li><span class="key-text">デフォルト確率の推定</span>：上記の式を用いて、企業のデフォルト確率を計算</li>
+    <li><span class="key-text">信用スプレッドの計算</span>：デフォルト確率から、債券の信用スプレッドを導出</li>
+    <li><span class="key-text">予想損失（EL）の計算</span>：EL = PD × LGD × EAD の式を用いて、予想損失を算出</li>
+  </ul>
+  
+  <h3>実用上の特徴</h3>
+  <ul>
+    <li><span class="key-text">市場データの利用</span>：株価や社債金利などの市場データを用いてデフォルト確率を推定</li>
+    <li><span class="key-text">上場企業への適用</span>：株価データが利用可能な上場企業に対して特に有効</li>
+    <li><span class="key-text">直感的な解釈</span>：企業価値と負債の関係に基づくモデルであるため、経済的な解釈が容易</li>
+  </ul>
+  
+  <h3>連続試行モデルとの比較</h3>
+  <p>Mertonモデルは、<span class="key-text">デフォルトが負債の返済期日にのみ発生すると仮定</span>する一方、連続試行モデル（First-Passage-Timeモデルなど）では、期中のデフォルトも考慮します。連続試行モデルの方が現実的なデフォルト発生のメカニズムを表現できますが、計算が複雑になる傾向があります。</p>
+  
+  <h3>金融市場での実用例</h3>
+  <ul>
+    <li><span class="key-text">信用リスク管理</span>：銀行や金融機関が与信ポートフォリオの信用リスクを評価</li>
+    <li><span class="key-text">信用デリバティブの評価</span>：CDO（債務担保証券）などの信用デリバティブの価格付け</li>
+    <li><span class="key-text">企業価値評価</span>：企業の資本構成や信用状態の分析</li>
+    <li><span class="key-text">規制資本の計算</span>：バーゼル規制における内部格付手法の基礎</li>
+  </ul>
+  
+  <div class="qa-container">
+    <div class="qa-item">
+      <input type="checkbox" id="q25" class="qa-toggle">
+      <label for="q25" class="qa-question">Q. Mertonモデルの実務的な課題と対応策を教えてください</label>
+      <div class="qa-answer">
+        Mertonモデルの実務的な課題と対応策：
+
+        【資産価値・ボラティリティの推定】
+        • 課題：企業の本当の資産価値は観測不能
+        • 対応策：株価データから逆算推定。具体的には株式をコールオプションとみなし、オプション理論を使って資産価値とボラティリティを同時に推定する反復計算法を用いる
+
+        【複雑な資本構造への対応】
+        • 課題：実際の企業は単純な一回の返済日という仮定に合わない複雑な資本構造
+        • 対応策：KMV型のアプローチで返済期間を平均化、または期間構造モデルに拡張して複数の負債スケジュールに対応
+
+        【厳密なデフォルト定義】
+        • 課題：実際のデフォルトは資産価値が負債を下回る前に発生することも
+        • 対応策：デフォルト閾値をカスタマイズする、または期中デフォルトを許容するFirst-Passage-Timeモデルを使用
+
+        【正規分布の仮定】
+        • 課題：資産収益率が正規分布に従わない可能性
+        • 対応策：より一般的な分布（t分布など）を使用、またはジャンプ拡散モデルで拡張
+
+        【産業特性の考慮】
+        • 課題：金融機関など高レバレッジ産業では通常のMertonモデルが不適切
+        • 対応策：産業セクター別にモデルを調整、レバレッジに応じた特別なキャリブレーション
+      </div>
+    </div>
+    
+    <div class="qa-item">
+      <input type="checkbox" id="q26" class="qa-toggle">
+      <label for="q26" class="qa-question">Q. どのような場合にMertonモデルが特に有効ですか？</label>
+      <div class="qa-answer">
+        Mertonモデルが特に有効なケース：
+
+        【市場情報の活用が重要な場面】
+        流動性の高い株式市場データがある上場企業の信用評価。市場の最新情報を即時に信用評価に反映できるため、格付機関の評価より早く信用状態の変化を検知できる。
+
+        【マクロ経済ストレステスト】
+        経済ショック時の企業デフォルト率の変化を評価する場合。株価の変動を通じて、マクロ経済シナリオの信用リスクへの影響を直接的にモデル化できる。
+
+        【リスクベース価格設定】
+        貸出や債券投資の価格設定（プライシング）において、市場整合的なリスクプレミアムを算出する場合。特に、格付だけでは捉えきれない同一格付内の信用力の違いを反映できる。
+
+        【クレジットポートフォリオ分析】
+        大規模な信用ポートフォリオの相関構造を考慮した統合リスク管理。企業の資産価値の相関を通じて、デフォルト相関を経済的に意味のある形でモデル化できる。
+
+        【企業間信用リスク比較】
+        業種や規模の異なる企業間で信用リスクを比較する場合。モデルの出力である「デフォルト距離」（資産価値と負債の差を標準偏差単位で測定）は、規模に依存しない比較指標となる。
+      </div>
+    </div>
+  </div>
+  
+  <a href="#toc" class="back-to-toc">▲ 目次に戻る</a>
+</div>
+
+<div class="section" id="terms">
+  <h2>主要用語・事実の整理</h2>
+  
+  <table>
+    <thead>
+      <tr>
+        <th>用語・概念</th>
+        <th>説明</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>エクスポージャー</td>
+        <td>特定のリスク要因に晒されている資産・負債・契約の金額。リスクへの曝露度を示す。</td>
+      </tr>
+      <tr>
+        <td>Value at Risk (VaR)</td>
+        <td>一定の信頼水準（例：95%、99%）で、一定期間内に予想される最大損失額。</td>
+      </tr>
+      <tr>
+        <td>Cash-Flow-at-Risk (CFaR)</td>
+        <td>一定信頼水準で予測されるキャッシュフローの悪化額。VaRのキャッシュフロー版。</td>
+      </tr>
+      <tr>
+        <td>デュレーション</td>
+        <td>金利変動に対する資産・負債の価値感応度を示す指標。金利が1%上昇した場合の価値変化率を近似。</td>
+      </tr>
+      <tr>
+        <td>LTV (Loan to Value)</td>
+        <td>融資額を担保となる資産価値で割った比率。担保価値下落時のリスク指標として使用。100%超過は債権の全額回収が難しくなる可能性を示す。</td>
+      </tr>
+      <tr>
+        <td>ヘッジ</td>
+        <td>リスクを軽減するための取引や戦略。デリバティブや現物取引を組み合わせて価格変動の影響を相殺する。</td>
+      </tr>
+      <tr>
+        <td>ベータ</td>
+        <td>個別資産の市場全体に対する価格感応度。ベータ=1は市場と同じ、ベータ>1は市場より変動が大きい。</td>
+      </tr>
+      <tr>
+        <td>シナリオ分析</td>
+        <td>複数の想定シナリオ下での損益影響を試算する手法。「もし〜なら」の分析として業務計画に活用。</td>
+      </tr>
+      <tr>
+        <td>ストレステスト</td>
+        <td>極端だが起こりうる悪条件下でのリスク耐性を検証するテスト。規制当局も金融機関に対して実施を要求。</td>
+      </tr>
+      <tr>
+        <td>PD（デフォルト確率）</td>
+        <td>債務者が一定期間内にデフォルト（債務不履行）に陥る確率。信用格付と対応する。</td>
+      </tr>
+      <tr>
+        <td>LGD（デフォルト時損失率）</td>
+        <td>デフォルト発生時に最終的に回収できない割合。担保・保証の有無が影響する。</td>
+      </tr>
+      <tr>
+        <td>モンテカルロシミュレーション</td>
+        <td>乱数を用いて多数のシナリオを生成し、統計的に結果を分析する手法。複雑なリスク分析に有効。</td>
+      </tr>
+      <tr>
+        <td>AI/機械学習の活用</td>
+        <td>大量データから非線形パターンを学習し、予測精度を高めたり、異常検知を行う手法。従来手法より精度向上が期待できる。</td>
+      </tr>
+      </tr>
+    </tbody>
+  </table>
+
+  <a href="#toc" class="back-to-toc">▲ 目次に戻る</a>
+</div>
+
+<div class="section" id="summary">
+  <h2>まとめ</h2>
+  <p>各リスクファクターについて、エクスポージャーの把握からモデリング、指標化、ビジネスへの応用まで概観しました。現代のリスク管理は伝統的手法に加え、AI・機械学習やLLMといった新技術の助けを借りて高度化が進んでいます。</p>
+  
+  <p>最終的な目的は、これらリスクを総合的に管理して<span class="key-text">企業価値の極端な毀損を防ぎ、持続的な成長</span>を支えることにあります。それぞれの領域で最新知見を取り入れ、プロアクティブなリスクマネジメントを実践することが重要です。</p>
+  <a href="#toc" class="back-to-toc">▲ 目次に戻る</a>
+</div>
+
+<footer>
+  © 2025 リスク管理情報センター
+</footer><!DOCTYPE html>
